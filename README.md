@@ -1,6 +1,6 @@
 # FireCord
 
-Bundle based on Kettu/FireCord, made just for fun
+Bundle based on Kettu/ShiggyCord, made just for fun
 
 ## Installing
 
