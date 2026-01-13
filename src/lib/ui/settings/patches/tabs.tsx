@@ -47,7 +47,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
       ...rendererConfigValue,
       VendettaCustomPage: {
         type: "route",
-        title: () => "ShiggyCord",
+        title: () => "FireCord",
         screen: {
           route: "VendettaCustomPage",
           getComponent: () => CustomPageRenderer,
@@ -55,7 +55,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
       },
       SHIGGYCORD_CUSTOM_PAGE: {
         type: "route",
-        title: () => "ShiggyCord",
+        title: () => "FireCord",
         screen: {
           route: "SHIGGYCORD_CUSTOM_PAGE",
           getComponent: () => CustomPageRenderer,
@@ -63,7 +63,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
       },
       BUNNY_CUSTOM_PAGE: {
         type: "route",
-        title: () => "ShiggyCord",
+        title: () => "FireCord",
         screen: {
           route: "BUNNY_CUSTOM_PAGE",
           getComponent: () => CustomPageRenderer,

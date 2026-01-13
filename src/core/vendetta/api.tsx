@@ -39,7 +39,7 @@ export async function createVdPluginObject(plugin: VendettaPlugin) {
         storage.createMMKVBackend(plugin.id),
       ),
     },
-    logger: new LoggerClass(`ShiggyCord » ${plugin.manifest.name}`),
+    logger: new LoggerClass(`FireCord » ${plugin.manifest.name}`),
   };
 }
 

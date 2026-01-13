@@ -20,12 +20,12 @@
       {
         "assets": [
           {
-            "path": "dist/shiggycord.js",
-            "label": "ShiggyCord Bundle"
+            "path": "dist/firecord.js",
+            "label": "FireCord Bundle"
           },
           {
-            "path": "dist/shiggycord.min.js",
-            "label": "ShiggyCord Bundle (minified)"
+            "path": "dist/firecord.min.js",
+            "label": "FireCord Bundle (minified)"
           }
         ]
       }

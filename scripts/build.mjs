@@ -53,14 +53,14 @@ const config = {
   inject: ["./shims/asyncIteratorSymbol.js", "./shims/promiseAllSettled.js", "./shims/weakref.js"],
   legalComments: "none",
   alias: {
-    "!ShiggyCord-deps-shim!": "./shims/depsModule.ts",
+    "!FireCord-deps-shim!": "./shims/depsModule.ts",
     spitroast: "./node_modules/spitroast",
     "react/jsx-runtime": "./shims/jsxRuntime",
   },
   plugins: [
     globalPlugin({
       ...metroDeps.reduce((obj, key) => {
-        obj[key] = `require("!ShiggyCord-deps-shim!")[${JSON.stringify(key)}]`;
+        obj[key] = `require("!FireCord-deps-shim!")[${JSON.stringify(key)}]`;
         return obj;
       }, {}),
     }),
