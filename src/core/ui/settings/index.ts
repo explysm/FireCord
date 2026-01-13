@@ -1,4 +1,4 @@
-import shiggycordIcon from "@assets/icons/shiggy.png";
+import firecordIcon from "@assets/icons/firecord.png";
 import { Strings } from "@core/i18n";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
@@ -7,16 +7,16 @@ import { settings } from "@lib/api/settings";
 import { registerSection } from "@ui/settings";
 import { version } from "bunny-build-info";
 
-export { shiggycordIcon };
+export { firecordIcon as shiggycordIcon };
 
 export default function initSettings() {
   registerSection({
-    name: "ShiggyCord",
+    name: "FireCord",
     items: [
       {
         key: "SHIGGYCORD",
         title: () => Strings.SHIGGYCORD,
-        icon: { uri: shiggycordIcon },
+        icon: { uri: firecordIcon },
         render: () => import("@core/ui/settings/pages/General"),
         useTrailing: () => `(${version})`,
       },

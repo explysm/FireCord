@@ -1,5 +1,5 @@
 import { Strings } from "@core/i18n";
-import { shiggycordIcon } from "@core/ui/settings";
+import { firecordIcon } from "@core/ui/settings";
 import Version from "@core/ui/settings/pages/General/Version";
 import { useProxy } from "@core/vendetta/storage";
 import { getDebugInfo } from "@lib/api/debug";
@@ -17,7 +17,7 @@ export default function About() {
     {
       label: Strings.SHIGGYCORD,
       version: debugInfo.bunny.version,
-      icon: { uri: shiggycordIcon },
+      icon: { uri: firecordIcon },
     },
     {
       label: "Discord",
@@ -97,7 +97,7 @@ export default function About() {
             variant="text-md/medium"
             style={{ textAlign: "center", marginTop: 4 }}
           >
-            Jolly your discord client!
+            Ignite your Discord client!
           </Text>
         </View>
 
