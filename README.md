@@ -1,14 +1,22 @@
-# ShiggyCord [![Discord](https://img.shields.io/discord/1427396621905432699?style=social&logo=discord&label=ShiggyCord)](https://discord.gg/nQykFF9Ud6)
+# FireCord
 
-Bundle based on Kettu, made just for fun
+Bundle based on Kettu/ShiggyCord, made just for fun
 
 ## Installing
 
 ### Android
+FireCord currently **does not** have a dedicated manager. To use FireCord, follow the instructions below:
 
-- Rooted: [Shiggy Xposed](https://github.com/kmmiio99o/ShiggyXposed)
+Get shiggycord manager: 
 
-- Non-Rooted: [Shiggy Manager](https://github.com/kmmiio99o/ShiggyManager)
+[Shiggy Manager](https://github.com/kmmiio99o/ShiggyManager)
+
+Install v305012/306013 by clicking "new install" and setting the version channel to "custom." It's also recommended to change the package name to ```dev.fire.cord``` & changing the app name to "FireCord."
+
+After installation, open up shiggycord and shake your phone to make the ShiggyXposed Recovery appear. 
+
+Next, click "Load Custom Bundle" and enable Custom Url. Input the following:
+```https://github.com/explysm/FireCord/releases/latest/download/shiggycord.js```
 
 ### Android/iOS
 - **Injecting bundle:**
@@ -17,17 +25,17 @@ Bundle based on Kettu, made just for fun
   ```
 
 ## Building
-1. Install a ShiggyCord loader with loader config support (any mentioned in the [Installing](#installing) section).
+1. Install a FireCord loader with loader config support (any mentioned in the [Installing](#installing) section).
 1. Go to Settings > General and enable Developer Settings.
 1. Clone the repo:
     ```
-    git clone https://github.com/kmmiio99o/Shiggycord.git
+    git clone https://github.com/explysm/FireCord.git
     ```
 1. Install dependencies:
     ```
     bun i
     ```
-1. Build ShiggyCord's code:
+1. Build FireCord's code:
     ```
     bun run build
     ```
