@@ -2,8 +2,8 @@
   "name": "FireCord",
   "private": true,
   "author": {
-    "name": "kmmiio99o",
-    "url": "https://github.com/kmmiio99o"
+    "name": "explysm",
+    "url": "https://github.com/explysm"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
