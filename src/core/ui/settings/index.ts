@@ -16,7 +16,7 @@ export default function initSettings() {
       {
         key: "SHIGGYCORD",
         title: () => Strings.SHIGGYCORD,
-        icon: { uri: firecordIcon },
+        icon: { uri: shiggycordIcon },
         render: () => import("@core/ui/settings/pages/General"),
         useTrailing: () => `(${version})`,
       },
