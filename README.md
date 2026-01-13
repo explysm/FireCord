@@ -7,13 +7,13 @@ Bundle based on Kettu/ShiggyCord, made just for fun
 ### Android
 FireCord currently **does not** have a dedicated manager. To use FireCord, follow the instructions below:
 
-Get FireCord manager: 
+Get Shiggy manager: 
 
-[FireCord Manager](https://github.com/kmmiio99o/ShiggyManager)
+[Shiggy Manager](https://github.com/kmmiio99o/ShiggyManager)
 
 Install v305012/306013 by clicking "new install" and setting the version channel to "custom." It's also recommended to change the package name to ```dev.fire.cord``` & changing the app name to "FireCord."
 
-After installation, open up FireCord and shake your phone to make the FireCord Recovery appear. 
+After installation, open up FireCord/ShiggyCord (whatever you named it) and shake your phone to make the ShiggyCord Recovery appear. 
 
 Next, click "Load Custom Bundle" and enable Custom Url. Input the following:
 ```https://github.com/explysm/FireCord/releases/latest/download/firecord.js```
