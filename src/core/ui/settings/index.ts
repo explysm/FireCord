@@ -7,6 +7,7 @@ import { settings } from "@lib/api/settings";
 import { registerSection } from "@ui/settings";
 import { version } from "bunny-build-info";
 
+export { firecordIcon };
 export { firecordIcon as shiggycordIcon };
 
 export default function initSettings() {

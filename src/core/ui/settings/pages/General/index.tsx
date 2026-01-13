@@ -1,6 +1,6 @@
 import { isSafeMode, toggleSafeMode } from "@core/debug/safeMode";
 import { Strings } from "@core/i18n";
-import { shiggycordIcon } from "@core/ui/settings";
+import { firecordIcon } from "@core/ui/settings";
 import About from "@core/ui/settings/pages/General/About";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
@@ -125,8 +125,8 @@ export default function General() {
       >
         <TableRowGroup title="App Information">
           <TableRow
-            label="ShiggyCold"
-            icon={<TableRow.Icon source={{ uri: shiggycordIcon ?? "" }} />}
+            label={Strings.SHIGGYCORD}
+            icon={<TableRow.Icon source={{ uri: firecordIcon ?? "" }} />}
             trailing={<TableRow.TrailingText text={debugInfo.bunny.version} />}
           />
           <TableRow
