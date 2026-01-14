@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import FontEditor from "@core/ui/settings/pages/Fonts/FontEditor";
-import { useProxy } from "@core/vendetta/storage";
+import { useProxy } from "@core/firecord/storage";
 import { FontDefinition, fonts } from "@lib/addons/fonts";
 import { settings } from "@lib/api/settings";
 import { NavigationNative } from "@metro/common";

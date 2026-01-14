@@ -9,7 +9,7 @@ declare global {
 
     interface Window {
         [key: string]: any;
-        vendetta: any;
+        firecord: any;
         bunny: typeof import("@lib");
     }
 }

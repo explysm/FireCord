@@ -1,7 +1,7 @@
 import { formatString, Strings } from "@core/i18n";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
-import { VdPluginManager } from "@core/vendetta/plugins";
-import { purgeStorage } from "@core/vendetta/storage";
+import { showConfirmationAlert } from "@core/firecord/alerts";
+import { FcPluginManager } from "@core/firecord/plugins";
+import { purgeStorage } from "@core/firecord/storage";
 import { findAssetId } from "@lib/api/assets";
 import { clipboard } from "@metro/common";
 import {
@@ -23,7 +23,7 @@ export default function PluginInfoActionSheet({
 }: PluginInfoActionSheetProps) {
   plugin.usePluginState();
 
-  const vdPlugin = VdPluginManager.plugins[plugin.id];
+  const vdPlugin = FcPluginManager.plugins[plugin.id];
   const SettingsComponent = plugin.getPluginSettingsComponent();
 
   return (
@@ -61,10 +61,9 @@ export default function PluginInfoActionSheet({
             icon={<TableRow.Icon source={findAssetId("RetryIcon")} />}
             onPress={async () => {
               if (vdPlugin.enabled)
-                VdPluginManager.stopPlugin(plugin.id, false);
+                FcPluginManager.stopPlugin(plugin.id, false);
 
-              try {
-                await VdPluginManager.fetchPlugin(plugin.id);
+                await FcPluginManager.fetchPlugin(plugin.id);
                 showToast(
                   Strings.PLUGIN_REFETCH_SUCCESSFUL,
                   findAssetId("toast_image_saved"),
@@ -74,7 +73,7 @@ export default function PluginInfoActionSheet({
               }
 
               if (vdPlugin.enabled)
-                await VdPluginManager.startPlugin(plugin.id);
+                await FcPluginManager.startPlugin(plugin.id);
               hideSheet("PluginInfoActionSheet");
             }}
           />
@@ -122,10 +121,10 @@ export default function PluginInfoActionSheet({
                 confirmColor: "red",
                 onConfirm: async () => {
                   if (vdPlugin.enabled)
-                    VdPluginManager.stopPlugin(plugin.id, false);
+                    FcPluginManager.stopPlugin(plugin.id, false);
 
                   try {
-                    await VdPluginManager.fetchPlugin(plugin.id);
+                    await FcPluginManager.fetchPlugin(plugin.id);
                     showToast(
                       Strings.PLUGIN_REFETCH_SUCCESSFUL,
                       findAssetId("toast_image_saved"),
@@ -151,7 +150,7 @@ export default function PluginInfoActionSheet({
                   );
 
                   if (vdPlugin.enabled)
-                    await VdPluginManager.startPlugin(plugin.id);
+                    await FcPluginManager.startPlugin(plugin.id);
                   hideSheet("PluginInfoActionSheet");
                 },
               })
@@ -177,7 +176,7 @@ export default function PluginInfoActionSheet({
                 confirmColor: "red",
                 onConfirm: () => {
                   try {
-                    VdPluginManager.removePlugin(plugin.id);
+                    FcPluginManager.removePlugin(plugin.id);
                   } catch (e) {
                     showToast(String(e), findAssetId("Small"));
                   }

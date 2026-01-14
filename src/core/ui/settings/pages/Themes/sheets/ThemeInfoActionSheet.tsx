@@ -6,7 +6,7 @@ import { clipboard } from "@metro/common";
 import React, { ComponentProps, useEffect, useState } from "react";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { showToast } from "@ui/toasts";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
+import { showConfirmationAlert } from "@core/firecord/alerts";
 import {
   fetchTheme,
   removeTheme,

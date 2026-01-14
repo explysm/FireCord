@@ -46,7 +46,7 @@ export function connectRdt(url: string, quiet?: boolean) {
         if (!quiet) showToast(err, findAssetId("CircleXIcon-primary"));
     });
 
-    window[getReactDevToolsProp() || "__vendetta_rdc"].connectToDevTools({
+    window[getReactDevToolsProp() || "__firecord_rdc"].connectToDevTools({
         websocket: ws,
     });
 }

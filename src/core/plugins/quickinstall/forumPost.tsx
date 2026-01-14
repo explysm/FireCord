@@ -1,6 +1,6 @@
 import { Strings } from "@core/i18n";
-import { VdPluginManager } from "@core/vendetta/plugins";
-import { useProxy } from "@core/vendetta/storage";
+import { FcPluginManager } from "@core/firecord/plugins";
+import { useProxy } from "@core/firecord/storage";
 import { installTheme, removeTheme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
@@ -29,13 +29,13 @@ const forumReactions = findByPropsLazy("MostCommonForumPostReaction");
 
 const postMap = {
   Plugin: {
-    storage: VdPluginManager.plugins,
+    storage: FcPluginManager.plugins,
     urlsFilter: (url: string) => url.startsWith(VD_PROXY_PREFIX),
     installOrRemove: (url: string) => {
       const isInstalled = postMap.Plugin.storage[url];
       return isInstalled
-        ? VdPluginManager.removePlugin(url)
-        : VdPluginManager.installPlugin(url);
+        ? FcPluginManager.removePlugin(url)
+        : FcPluginManager.installPlugin(url);
     },
   },
   Theme: {
@@ -86,7 +86,7 @@ function useInstaller(
   const [postType, url] =
     useExtractThreadContent(thread, firstMessage, actionSheet) ?? [];
 
-  useProxy(VdPluginManager.plugins);
+  useProxy(FcPluginManager.plugins);
   useProxy(themes);
 
   const [isInstalling, setIsInstalling] = React.useState(false);

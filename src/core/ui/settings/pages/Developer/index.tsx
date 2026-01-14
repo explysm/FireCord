@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
 import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
-import { useProxy } from "@core/vendetta/storage";
+import { useProxy } from "@core/firecord/storage";
 import { findAssetId } from "@lib/api/assets";
 import {
   connectToDebugger,
@@ -13,7 +13,7 @@ import {
   getReactDevToolsVersion,
   isLoaderConfigSupported,
   isReactDevToolsPreloaded,
-  isVendettaLoader,
+  isFirecordLoader,
 } from "@lib/api/native/loader";
 import { loaderConfig, settings } from "@lib/api/settings";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -167,7 +167,7 @@ export default function Developer() {
 
                   try {
                     const devTools =
-                      window[getReactDevToolsProp() || "__vendetta_rdc"];
+                      window[getReactDevToolsProp() || "__firecord_rdc"];
 
                     if (!devTools?.connectToDevTools) {
                       showToast(
@@ -194,7 +194,7 @@ export default function Developer() {
                 }}
               />
 
-              {isLoaderConfigSupported() && isVendettaLoader() && (
+              {isLoaderConfigSupported() && isFirecordLoader() && (
                 <TableSwitchRow
                   label={Strings.LOAD_REACT_DEVTOOLS}
                   subLabel={`${Strings.VERSION}: ${getReactDevToolsVersion()}`}

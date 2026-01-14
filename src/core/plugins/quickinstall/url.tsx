@@ -1,6 +1,6 @@
 import { formatString, Strings } from "@core/i18n";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
-import { VdPluginManager } from "@core/vendetta/plugins";
+import { showConfirmationAlert } from "@core/firecord/alerts";
+import { FcPluginManager } from "@core/firecord/plugins";
 import { installTheme } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
@@ -31,7 +31,7 @@ function typeFromUrl(url: string) {
 
 function installWithToast(type: "plugin" | "theme", url: string) {
   (type === "plugin"
-    ? VdPluginManager.installPlugin.bind(VdPluginManager)
+    ? FcPluginManager.installPlugin.bind(FcPluginManager)
     : installTheme)(url)
     .then(() => {
       showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));

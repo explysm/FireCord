@@ -1,4 +1,4 @@
-import { createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@core/vendetta/storage";
+import { createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@core/firecord/storage";
 import { getLoaderConfigPath } from "@lib/api/native/loader";
 
 export interface Settings {
@@ -23,7 +23,7 @@ export interface LoaderConfig {
     loadReactDevTools: boolean;
 }
 
-export const settings = wrapSync(createStorage<Settings>(createMMKVBackend("VENDETTA_SETTINGS")));
+export const settings = wrapSync(createStorage<Settings>(createMMKVBackend("FIRE_CORD_SETTINGS")));
 
 export const loaderConfig = wrapSync(createStorage<LoaderConfig>(
     createFileBackend(getLoaderConfigPath(), {
@@ -39,4 +39,4 @@ export interface UpdaterSettings {
     repoAutoFetchOverrides?: Record<string, boolean>;
 }
 
-export const updaterSettings = wrapSync(createStorage<UpdaterSettings>(createMMKVBackend("VENDETTA_UPDATER_SETTINGS")));
+export const updaterSettings = wrapSync(createStorage<UpdaterSettings>(createMMKVBackend("FIRE_CORD_UPDATER_SETTINGS")));

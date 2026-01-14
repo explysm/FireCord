@@ -56,7 +56,7 @@ export function patchPanelUI(unpatches: (() => void | boolean)[]) {
     unpatches.push(
       after("default", findByNameLazy("getScreens", false), (_a, screens) => ({
         ...screens,
-        VendettaCustomPage: {
+        FirecordCustomPage: {
           title: "FireCord",
           render: () => <CustomPageRenderer />,
         },

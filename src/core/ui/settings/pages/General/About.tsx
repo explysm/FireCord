@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import { firecordIcon } from "@core/ui/settings";
 import Version from "@core/ui/settings/pages/General/Version";
-import { useProxy } from "@core/vendetta/storage";
+import { useProxy } from "@core/firecord/storage";
 import { getDebugInfo } from "@lib/api/debug";
 import { settings, loaderConfig } from "@lib/api/settings";
 import { Stack, TableRowGroup, TableRow, Text } from "@metro/common/components";

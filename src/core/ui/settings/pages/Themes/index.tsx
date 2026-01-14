@@ -1,7 +1,7 @@
 import { formatString, Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
-import { useProxy } from "@core/vendetta/storage";
+import { useProxy } from "@core/firecord/storage";
 import {
   getCurrentTheme,
   installTheme,

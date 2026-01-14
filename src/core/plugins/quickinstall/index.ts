@@ -13,8 +13,8 @@ export default defineCorePlugin({
     main: "",
     display: {
       name: "QuickInstall",
-      description: "Quickly install Vendetta plugins and themes",
-      authors: [{ name: "Vendetta Team" }],
+      description: "Quickly install Firecord plugins and themes",
+      authors: [{ name: "Firecord Team" }],
     },
   },
   start() {

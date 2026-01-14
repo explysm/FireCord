@@ -45,11 +45,11 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
     configurable: true,
     get: () => ({
       ...rendererConfigValue,
-      VendettaCustomPage: {
+      FirecordCustomPage: {
         type: "route",
         title: () => "FireCord",
         screen: {
-          route: "VendettaCustomPage",
+          route: "FirecordCustomPage",
           getComponent: () => CustomPageRenderer,
         },
       },

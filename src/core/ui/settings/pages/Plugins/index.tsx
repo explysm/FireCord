@@ -12,8 +12,8 @@ import {
 import { Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
-import { VdPluginManager } from "@core/vendetta/plugins";
-import { useProxy } from "@core/vendetta/storage";
+import { FcPluginManager } from "@core/firecord/plugins";
+import { useProxy } from "@core/firecord/storage";
 import {
   corePluginInstances,
   isCorePlugin,
@@ -46,7 +46,7 @@ import { proxyLazy } from "@lib/utils/lazy";
 
 import { UnifiedPluginModel } from "./models";
 import unifyBunnyPlugin from "./models/bunny";
-import unifyVdPlugin from "./models/vendetta";
+import unifyVdPlugin from "./models/firecord";
 
 const { openAlert } = lazyDestructure(() =>
   findByProps("openAlert", "dismissAlert"),
@@ -103,7 +103,7 @@ function InstallButton({
   setRefreshTick,
 }: any) {
   const pluginId = normalizeIdFromInstallUrl(addon.installUrl);
-  const plugin = VdPluginManager.plugins[pluginId];
+  const plugin = FcPluginManager.plugins[pluginId];
   const installed = !!plugin;
   const isInstalling = installing.has(pluginId);
 
@@ -168,7 +168,7 @@ function InstallButton({
     }, 100);
 
     try {
-      await VdPluginManager.installPlugin(addon.installUrl);
+      await FcPluginManager.installPlugin(addon.installUrl);
       setRefreshTick((prev: number) => prev + 1);
 
       // Show success feedback
@@ -292,7 +292,7 @@ function InstallButton({
   };
 
   const handleUninstall = () => {
-    VdPluginManager.removePlugin(pluginId);
+    FcPluginManager.removePlugin(pluginId);
     setRefreshTick((prev: number) => prev + 1);
   };
 
@@ -477,9 +477,9 @@ function InstalledPluginPage(props: PluginPageProps) {
           Number(a.isEnabled()) - Number(b.isEnabled()),
         "Date (Newest)": (a, b) => {
           // Prefer recently installed/registered plugins first. We look up insertion
-          // order from Vendetta manager and Bunny pluginSettings; later entries are
+          // order from Firecord manager and Bunny pluginSettings; later entries are
           // considered newer (higher index). If missing, treat index as -1.
-          const vdOrder = Object.keys(VdPluginManager.plugins || {});
+          const vdOrder = Object.keys(FcPluginManager.plugins || {});
           const bnOrder = Object.keys(pluginSettings || {});
           const idx = (id: string) => {
             const vdI = vdOrder.indexOf(id);
@@ -489,7 +489,7 @@ function InstalledPluginPage(props: PluginPageProps) {
           return idx(b.id) - idx(a.id);
         },
         "Date (Oldest)": (a, b) => {
-          const vdOrder = Object.keys(VdPluginManager.plugins || {});
+          const vdOrder = Object.keys(FcPluginManager.plugins || {});
           const bnOrder = Object.keys(pluginSettings || {});
           const idx = (id: string) => {
             const vdI = vdOrder.indexOf(id);
@@ -535,9 +535,9 @@ function BrowsePluginPage(props: BrowsePluginPageProps) {
   };
 
   const isEnabledForAddon = (addon: PluginData) => {
-    const vendettaId = normalizeIdFromInstallUrl(addon.installUrl);
-    const vd = VdPluginManager.plugins[vendettaId];
-    if (vd) return Boolean(vd.enabled ?? true);
+    const firecordId = normalizeIdFromInstallUrl(addon.installUrl);
+    const fc = FcPluginManager.plugins[firecordId];
+    if (fc) return Boolean(fc.enabled ?? true);
 
     const bnId = findBunnyIdForAddon(addon);
     if (bnId) return Boolean(pluginSettings[bnId]?.enabled);
@@ -547,9 +547,9 @@ function BrowsePluginPage(props: BrowsePluginPageProps) {
 
   // Helper to determine whether an addon from the remote list is installed locally.
   const isInstalledForAddon = (addon: PluginData) => {
-    const vendettaId = normalizeIdFromInstallUrl(addon.installUrl);
-    // Vendetta-managed plugin presence indicates installed
-    if (VdPluginManager.plugins[vendettaId]) return true;
+    const firecordId = normalizeIdFromInstallUrl(addon.installUrl);
+    // Firecord-managed plugin presence indicates installed
+    if (FcPluginManager.plugins[firecordId]) return true;
 
     // For Bunny-registered plugins, try to resolve by display name -> id and check pluginSettings
     const bnId = findBunnyIdForAddon(addon);
@@ -687,16 +687,16 @@ export default function Plugins() {
     return (
       <InstalledPluginPage
         useItems={() => {
-          useProxy(VdPluginManager.plugins);
+          useProxy(FcPluginManager.plugins);
           useObservable([pluginSettings]);
 
-          // Vendetta plugins: preserve VdPluginManager.plugins insertion order,
+          // Firecord plugins: preserve FcPluginManager.plugins insertion order,
           // but display most recently added first (reverse the keys).
-          const vdIds = Object.keys(VdPluginManager.plugins || {});
+          const vdIds = Object.keys(FcPluginManager.plugins || {});
           const vdPlugins = vdIds
             .slice()
             .reverse()
-            .map((id) => unifyVdPlugin(VdPluginManager.plugins[id]));
+            .map((id) => unifyVdPlugin(FcPluginManager.plugins[id]));
 
           // Bunny external plugins which are installed (non-core).
           // Use the insertion order of pluginSettings so newly-installed plugins
@@ -710,7 +710,7 @@ export default function Plugins() {
             .map((id) => registeredPlugins.get(id)!)
             .map(unifyBunnyPlugin);
 
-          // Merge lists: show Vendetta-managed plugins first,
+          // Merge lists: show Firecord-managed plugins first,
           // then Bunny-installed externals (recent first).
           const allPlugins = [...vdPlugins, ...bnPlugins];
 
@@ -721,7 +721,7 @@ export default function Plugins() {
         installAction={{
           label: "Install a plugin",
           fetchFn: async (url: string) => {
-            return await VdPluginManager.installPlugin(url);
+            return await FcPluginManager.installPlugin(url);
           },
         }}
       />

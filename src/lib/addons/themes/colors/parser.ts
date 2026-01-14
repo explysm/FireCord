@@ -58,7 +58,7 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
         };
     }
 
-    if (manifest.spec === 2) { // is Vendetta theme
+    if (manifest.spec === 2) { // is Firecord theme
         const semanticDefinitions: InternalColorDefinition["semantic"] = {};
         const background: InternalColorDefinition["background"] | undefined = manifest.background ? {
             ...omit(manifest.background, ["alpha"]),

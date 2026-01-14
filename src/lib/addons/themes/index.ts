@@ -1,4 +1,4 @@
-import { awaitStorage, createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@core/vendetta/storage";
+import { awaitStorage, createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@core/firecord/storage";
 import { writeFile } from "@lib/api/native/fs";
 import { getStoredTheme, getThemeFilePath, isPyonLoader, isThemeSupported } from "@lib/api/native/loader";
 import { awaitStorage as newAwaitStorage } from "@lib/api/storage";
@@ -8,21 +8,21 @@ import { settings } from "@lib/api/settings";
 import initColors from "./colors";
 import { applyAndroidAlphaKeys, normalizeToHex } from "./colors/parser";
 import { colorsPref } from "./colors/preferences";
-import { VendettaThemeManifest } from "./colors/types";
+import { FirecordThemeManifest } from "./colors/types";
 import { updateBunnyColor } from "./colors/updater";
 
-export interface VdThemeInfo {
+export interface FcThemeInfo {
     id: string;
     selected: boolean;
-    data: VendettaThemeManifest;
+    data: FirecordThemeManifest;
 }
 
-export const themes = wrapSync(createStorage<Record<string, VdThemeInfo>>(createMMKVBackend("VENDETTA_THEMES")));
+export const themes = wrapSync(createStorage<Record<string, FcThemeInfo>>(createMMKVBackend("FIRE_CORD_THEMES")));
 
 /**
  * @internal
  */
-export async function writeThemeToNative(theme: VdThemeInfo | {}) {
+export async function writeThemeToNative(theme: FcThemeInfo | {}) {
     if (typeof theme !== "object") throw new Error("Theme must be an object");
 
     // Save the current theme as current-theme.json. When supported by loader,
@@ -31,7 +31,7 @@ export async function writeThemeToNative(theme: VdThemeInfo | {}) {
 }
 
 // Process data for some compatiblity with native side
-function processData(data: VendettaThemeManifest) {
+function processData(data: FirecordThemeManifest) {
     if (data.semanticColors) {
         const { semanticColors } = data;
 
@@ -104,7 +104,7 @@ export async function installTheme(url: string) {
     await fetchTheme(url);
 }
 
-export function selectTheme(theme: VdThemeInfo | null, write = true) {
+export function selectTheme(theme: FcThemeInfo | null, write = true) {
     if (theme) theme.selected = true;
     Object.keys(themes).forEach(
         k => themes[k].selected = themes[k].id === theme?.id
@@ -140,7 +140,7 @@ export function getCurrentTheme() {
 /**
  * @internal
  */
-export function getThemeFromLoader(): VdThemeInfo | null {
+export function getThemeFromLoader(): FcThemeInfo | null {
     return getStoredTheme();
 }
 
@@ -153,7 +153,7 @@ export async function initThemes() {
 
     try {
         if (isPyonLoader()) {
-            writeFile("../vendetta_theme.json", "null");
+            writeFile("../firecord_theme.json", "null");
         }
 
         await newAwaitStorage(colorsPref);

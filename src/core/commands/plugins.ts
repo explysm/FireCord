@@ -4,7 +4,7 @@ import {
   ApplicationCommandOptionType,
 } from "@lib/api/commands/types";
 import { messageUtil } from "@metro/common";
-import { VdPluginManager, VendettaPlugin } from "@core/vendetta/plugins";
+import { FcPluginManager, FirecordPlugin } from "@core/firecord/plugins";
 import {
   registeredPlugins,
   corePluginInstances,
@@ -17,11 +17,11 @@ import {
  * Aggregates:
  *  - Core plugins (built-in) from corePluginInstances
  *  - External plugins:
- *     - Vendetta-managed plugins (VdPluginManager.plugins)
+ *     - Firecord-managed plugins (FcPluginManager.plugins)
  *     - Bunny repository plugins (registeredPlugins + pluginSettings)
  *
  * Dedupes by plugin id and shows Enabled / Disabled groups.
- * For external plugins each entry will show its source(s) (vendetta / bunny).
+ * For external plugins each entry will show its source(s) (firecord / bunny).
  */
 export default () =>
   <ApplicationCommand>{
@@ -52,23 +52,23 @@ export default () =>
         .map((m) => m.display?.name ?? m.name ?? m.id)
         .sort((a, b) => a.localeCompare(b));
 
-      // --- External plugins aggregation (Vendetta + Bunny) ---
+      // --- External plugins aggregation (Firecord + Bunny) ---
       type ExtEntry = {
         id: string;
         name: string;
         sources: Set<string>;
-        enabled: boolean; // overall enabled if any source reports enabled (Vendetta) or pluginSettings for Bunny
+        enabled: boolean; // overall enabled if any source reports enabled (Firecord) or pluginSettings for Bunny
       };
 
       const aggregated = new Map<string, ExtEntry>();
 
-      // Vendetta plugins (if available)
+      // Firecord plugins (if available)
       try {
         const vdRaw =
-          (VdPluginManager && (VdPluginManager as any).plugins) || {};
+          (FcPluginManager && (FcPluginManager as any).plugins) || {};
         const vdPlugins = Object.values(vdRaw).filter(
           Boolean,
-        ) as VendettaPlugin[];
+        ) as FirecordPlugin[];
 
         for (const p of vdPlugins) {
           const id =
@@ -77,19 +77,19 @@ export default () =>
           const enabled = Boolean(p.enabled);
           const existing = aggregated.get(id);
           if (existing) {
-            existing.sources.add("vendetta");
+            existing.sources.add("firecord");
             existing.enabled = existing.enabled || enabled;
           } else {
             aggregated.set(id, {
               id,
               name,
-              sources: new Set(["vendetta"]),
+              sources: new Set(["firecord"]),
               enabled,
             });
           }
         }
       } catch (e) {
-        // Defensive: if Vendetta manager isn't ready, skip vendetta aggregation
+        // Defensive: if Firecord manager isn't ready, skip firecord aggregation
       }
 
       // Bunny external plugins: use registeredPlugins + pluginSettings (installed)
@@ -107,7 +107,7 @@ export default () =>
         const installed = pluginSettings[id] != null;
         const enabled = Boolean(pluginSettings[id]?.enabled);
 
-        // If not installed and not present in aggregated (vendetta), still include as available but mark enabled=false
+        // If not installed and not present in aggregated (firecord), still include as available but mark enabled=false
         const existing = aggregated.get(id);
         if (existing) {
           existing.sources.add("bunny");

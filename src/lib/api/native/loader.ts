@@ -8,9 +8,9 @@ const pyonLoaderIdentity = globalThis.__PYON_LOADER__;
 const rainLoaderIdentity = globalThis.__RAIN_LOADER__;
 
 // @ts-ignore
-const vendettaLoaderIdentity = globalThis.__vendetta_loader;
+const firecordLoaderIdentity = globalThis.__firecord_loader;
 
-export interface VendettaLoaderIdentity {
+export interface FirecordLoaderIdentity {
     name: string;
     features: {
         loaderConfig?: boolean;
@@ -24,8 +24,8 @@ export interface VendettaLoaderIdentity {
     };
 }
 
-export function isVendettaLoader() {
-    return vendettaLoaderIdentity != null;
+export function isFirecordLoader() {
+    return firecordLoaderIdentity != null;
 }
 
 export function isPyonLoader() {
@@ -36,8 +36,8 @@ export function isRa1nLoader() {
     return rainLoaderIdentity != null;
 }
 
-function polyfillVendettaLoaderIdentity() {
-    if (!isPyonLoader() || isVendettaLoader() || !isRa1nLoader()) return null;
+function polyfillFirecordLoaderIdentity() {
+    if (!isPyonLoader() || isFirecordLoader() || !isRa1nLoader()) return null;
 
     let loader: { name: string; features: Record<string, any> };
 
@@ -56,20 +56,20 @@ function polyfillVendettaLoaderIdentity() {
     if (isLoaderConfigSupported()) loader.features.loaderConfig = true;
     if (isSysColorsSupported()) {
         loader.features.syscolors = {
-            prop: "__vendetta_syscolors"
+            prop: "__firecord_syscolors"
         };
 
-        Object.defineProperty(globalThis, "__vendetta_syscolors", {
+        Object.defineProperty(globalThis, "__firecord_syscolors", {
             get: () => getSysColors(),
             configurable: true
         });
     }
     if (isThemeSupported()) {
         loader.features.themes = {
-            prop: "__vendetta_theme"
+            prop: "__firecord_theme"
         };
 
-        Object.defineProperty(globalThis, "__vendetta_theme", {
+        Object.defineProperty(globalThis, "__firecord_theme", {
             // get: () => getStoredTheme(),
             get: () => {
                 // PyonXposed only returns keys it parses, making custom keys like Themes+' to gone
@@ -83,19 +83,19 @@ function polyfillVendettaLoaderIdentity() {
         });
     }
 
-    Object.defineProperty(globalThis, "__vendetta_loader", {
+    Object.defineProperty(globalThis, "__firecord_loader", {
         get: () => loader,
         configurable: true
     });
 
-    return loader as VendettaLoaderIdentity;
+    return loader as FirecordLoaderIdentity;
 }
 
 export function getLoaderIdentity() {
     if (isPyonLoader()) {
         return pyonLoaderIdentity;
-    } else if (isVendettaLoader()) {
-        return getVendettaLoaderIdentity();
+    } else if (isFirecordLoader()) {
+        return getFirecordLoaderIdentity();
     } else if (isRa1nLoader()) {
         return rainLoaderIdentity();
     }
@@ -103,19 +103,19 @@ export function getLoaderIdentity() {
     return null;
 }
 
-export function getVendettaLoaderIdentity(): VendettaLoaderIdentity | null {
+export function getFirecordLoaderIdentity(): FirecordLoaderIdentity | null {
     // @ts-ignore
-    if (globalThis.__vendetta_loader) return globalThis.__vendetta_loader;
-    return polyfillVendettaLoaderIdentity();
+    if (globalThis.__firecord_loader) return globalThis.__firecord_loader;
+    return polyfillFirecordLoaderIdentity();
 }
 
-// add to __vendetta_loader anyway
-getVendettaLoaderIdentity();
+// add to __firecord_loader anyway
+getFirecordLoaderIdentity();
 
 export function getLoaderName() {
     if (isPyonLoader()) return pyonLoaderIdentity.loaderName;
     else if (isRa1nLoader()) return rainLoaderIdentity.loadername;
-    else if (isVendettaLoader()) return vendettaLoaderIdentity.name;
+    else if (isFirecordLoader()) return firecordLoaderIdentity.name;
 
     return "Unknown";
 }
@@ -129,8 +129,8 @@ export function getLoaderVersion(): string | null {
 export function isLoaderConfigSupported() {
     if (isPyonLoader()) {
         return true;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.loaderConfig;
+    } else if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.loaderConfig;
     } else if (isRa1nLoader()) {
         return true;
     }
@@ -141,8 +141,8 @@ export function isLoaderConfigSupported() {
 export function isThemeSupported() {
     if (isPyonLoader()) {
         return pyonLoaderIdentity.hasThemeSupport;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.themes != null;
+    } else if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.themes != null;
     } else if (isRa1nLoader()) {
         return false; // Ra1n has theme support disabled, this is here just to make sure it doesnt think it does
     }
@@ -153,8 +153,8 @@ export function isThemeSupported() {
 export function getStoredTheme(): VdThemeInfo | null {
     if (isPyonLoader()) {
         return pyonLoaderIdentity.storedTheme;
-    } else if (isVendettaLoader()) {
-        const themeProp = vendettaLoaderIdentity!!.features.themes?.prop;
+    } else if (isFirecordLoader()) {
+        const themeProp = firecordLoaderIdentity!!.features.themes?.prop;
         if (!themeProp) return null;
         // @ts-ignore
         return globalThis[themeProp] || null;
@@ -166,8 +166,8 @@ export function getStoredTheme(): VdThemeInfo | null {
 export function getThemeFilePath() {
     if (isPyonLoader()) {
         return "pyoncord/current-theme.json";
-    } else if (isVendettaLoader()) {
-        return "vendetta_theme.json";
+    } else if (isFirecordLoader()) {
+        return "firecord_theme.json";
     }
 
     return null;
@@ -177,8 +177,8 @@ export function isReactDevToolsPreloaded() {
     if (isPyonLoader()) {
         return Boolean(window.__REACT_DEVTOOLS__);
     }
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools != null;
+    if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.devtools != null;
     }
 
     return false;
@@ -192,8 +192,8 @@ export function getReactDevToolsProp(): string | null {
         return "__pyoncord_rdt";
     }
 
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools!!.prop;
+    if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.devtools!!.prop;
     }
 
     return null;
@@ -205,8 +205,8 @@ export function getReactDevToolsVersion() {
     if (isPyonLoader()) {
         return window.__REACT_DEVTOOLS__.version || null;
     }
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools!!.version;
+    if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.devtools!!.version;
     }
 
     return null;
@@ -220,8 +220,8 @@ export function getSysColors() {
     if (!isSysColorsSupported()) return null;
     if (isPyonLoader()) {
         return pyonLoaderIdentity.sysColors;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.syscolors!!.prop;
+    } else if (isFirecordLoader()) {
+        return firecordLoaderIdentity!!.features.syscolors!!.prop;
     }
 
     return null;
@@ -230,8 +230,8 @@ export function getSysColors() {
 export function getLoaderConfigPath() {
     if (isPyonLoader()) {
         return "pyoncord/loader.json";
-    } else if (isVendettaLoader()) {
-        return "vendetta_loader.json";
+    } else if (isFirecordLoader()) {
+        return "firecord_loader.json";
     } else if (isRa1nLoader()) {
         return "rain/loader.json";
     }

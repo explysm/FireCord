@@ -1,6 +1,6 @@
 import firecordIcon from "@assets/icons/firecord.png";
 import { Strings } from "@core/i18n";
-import { useProxy } from "@core/vendetta/storage";
+import { useProxy } from "@core/firecord/storage";
 import { findAssetId } from "@lib/api/assets";
 import { isFontSupported, isThemeSupported } from "@lib/api/native/loader";
 import { settings } from "@lib/api/settings";
@@ -63,9 +63,9 @@ export default function initSettings() {
     items: [],
   });
 
-  // Compat with Vendetta Plugins that use configs in settings
+  // Compat with Firecord Plugins that use configs in settings
   registerSection({
-    name: "Vendetta",
+    name: "Firecord",
     items: [],
   });
 }

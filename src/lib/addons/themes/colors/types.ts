@@ -23,7 +23,7 @@ export interface BunnyColorManifest extends BunnyManifest {
     }
 }
 
-export interface VendettaThemeManifest {
+export interface FirecordThemeManifest {
     spec: 2;
     name: string;
     description?: string;
@@ -62,4 +62,4 @@ export interface InternalColorDefinition {
     background?: BackgroundDefinition;
 }
 
-export type ColorManifest = BunnyColorManifest | VendettaThemeManifest | EnmityColorManifest;
+export type ColorManifest = BunnyColorManifest | FirecordThemeManifest | EnmityColorManifest;

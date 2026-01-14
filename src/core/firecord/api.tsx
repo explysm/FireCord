@@ -1,12 +1,12 @@
-import * as alerts from "@core/vendetta/alerts";
-import * as storage from "@core/vendetta/storage";
-import { createStorage } from "@core/vendetta/storage";
+import * as alerts from "@core/firecord/alerts";
+import * as storage from "@core/firecord/storage";
+import { createStorage } from "@core/firecord/storage";
 import * as themes from "@lib/addons/themes";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
 import {
-  getVendettaLoaderIdentity,
+  getFirecordLoaderIdentity,
   isPyonLoader,
 } from "@lib/api/native/loader";
 import patcher from "@lib/api/patcher";
@@ -26,11 +26,11 @@ import { omit } from "es-toolkit";
 import { createElement, useEffect } from "react";
 import { View } from "react-native";
 
-import { VdPluginManager, VendettaPlugin } from "./plugins";
+import { FcPluginManager, FirecordPlugin } from "./plugins";
 
-export async function createVdPluginObject(plugin: VendettaPlugin) {
+export async function createVdPluginObject(plugin: FirecordPlugin) {
   return {
-    ...window.vendetta,
+    ...window.bunny,
     plugin: {
       id: plugin.id,
       manifest: plugin.manifest,
@@ -43,7 +43,7 @@ export async function createVdPluginObject(plugin: VendettaPlugin) {
   };
 }
 
-export const initVendettaObject = (): any => {
+export const initFirecordObject = (): any => {
   // pitfall: this assumes the returning module(s) are the same within the same location
   // find(m => m.render?.name === "ActionSheet") - would work fine
   // ["trackThis", "trackThat"].forEach(p => find(m => m[p])) - would not
@@ -58,7 +58,7 @@ export const initVendettaObject = (): any => {
     };
   };
 
-  const api = (window.vendetta = {
+  const api = (window.bunny = {
     patcher: {
       before: patcher.before,
       after: patcher.after,
@@ -142,7 +142,7 @@ export const initVendettaObject = (): any => {
         ReactNative: common.ReactNative,
         get moment() {
           // Lazy-require heavy libs to avoid pulling them into the startup bundle.
-          // Consumers access `window.vendetta.common.moment` and this getter will
+          // Consumers access `window.bunny.common.moment` and this getter will
           // require the module on first access.
           return require("moment");
         },
@@ -159,7 +159,7 @@ export const initVendettaObject = (): any => {
     },
     constants: {
       DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
-      GITHUB: "https://github.com/vendetta-mod",
+      GITHUB: "https://github.com/firecord-mod",
       PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
       HTTP_REGEX:
         /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
@@ -247,15 +247,15 @@ export const initVendettaObject = (): any => {
       rawColors: color.rawColors,
     },
     plugins: {
-      plugins: VdPluginManager.plugins,
-      fetchPlugin: (source: string) => VdPluginManager.fetchPlugin(source),
+      plugins: FcPluginManager.plugins,
+      fetchPlugin: (source: string) => FcPluginManager.fetchPlugin(source),
       installPlugin: (source: string, enabled = true) =>
-        VdPluginManager.installPlugin(source, enabled),
-      startPlugin: (id: string) => VdPluginManager.startPlugin(id),
+        FcPluginManager.installPlugin(source, enabled),
+      startPlugin: (id: string) => FcPluginManager.startPlugin(id),
       stopPlugin: (id: string, disable = true) =>
-        VdPluginManager.stopPlugin(id, disable),
-      removePlugin: (id: string) => VdPluginManager.removePlugin(id),
-      getSettings: (id: string) => VdPluginManager.getSettings(id),
+        FcPluginManager.stopPlugin(id, disable),
+      removePlugin: (id: string) => FcPluginManager.removePlugin(id),
+      getSettings: (id: string) => FcPluginManager.getSettings(id),
     },
     themes: {
       themes: themes.themes,
@@ -279,8 +279,8 @@ export const initVendettaObject = (): any => {
       awaitSyncWrapper: (store: any) => storage.awaitStorage(store),
       createMMKVBackend: (store: string) => storage.createMMKVBackend(store),
       createFileBackend: (file: string) => {
-        // Redirect path to vendetta_theme.json
-        if (isPyonLoader() && file === "vendetta_theme.json") {
+        // Redirect path to firecord_theme.json
+        if (isPyonLoader() && file === "firecord_theme.json") {
           file = "pyon/current-theme.json";
         }
 
@@ -289,7 +289,7 @@ export const initVendettaObject = (): any => {
     },
     settings,
     loader: {
-      identity: getVendettaLoaderIdentity() ?? void 0,
+      identity: getFirecordLoaderIdentity() ?? void 0,
       config: loaderConfig,
     },
     logger: {
@@ -303,7 +303,7 @@ export const initVendettaObject = (): any => {
     },
     version: debug.versionHash,
     unload: () => {
-      delete window.vendetta;
+      delete window.bunny;
     },
   });
 

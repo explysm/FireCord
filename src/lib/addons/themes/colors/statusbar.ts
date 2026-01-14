@@ -12,7 +12,7 @@ function getBarStyle() {
         if (custom.spec === 3 && custom.reference) {
             return custom.reference === "light" ? "dark-content" : "light-content";
         }
-        // Vendetta theme (spec 2)
+        // Firecord theme (spec 2)
         if (custom.spec === 2 && custom.reference) {
             return custom.reference === "light" ? "dark-content" : "light-content";
         }

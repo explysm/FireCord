@@ -2,7 +2,7 @@ import patchErrorBoundary from "@core/debug/patches/patchErrorBoundary";
 import initFixes from "@core/fixes";
 import { initFetchI18nStrings } from "@core/i18n";
 import initSettings from "@core/ui/settings";
-import { initVendettaObject } from "@core/vendetta/api";
+import { initFirecordObject } from "@core/firecord/api";
 import { updateFonts } from "@lib/addons/fonts";
 import { initThemes } from "@lib/addons/themes";
 import { patchCommands } from "@lib/api/commands";
@@ -35,7 +35,7 @@ export default async () => {
     ["patchCommands", () => patchCommands()],
     ["patchJsx", () => patchJsx()],
     ["patchErrorBoundary", () => patchErrorBoundary()],
-    ["initVendettaObject", () => initVendettaObject()],
+    ["initFirecordObject", () => initFirecordObject()],
     ["initFetchI18nStrings", () => initFetchI18nStrings()],
     ["initSettings", () => initSettings()],
     ["initFixes", () => initFixes()],
@@ -63,13 +63,13 @@ export default async () => {
 
   // Deferred work: run after interactions to avoid blocking initial paint and navigation.
   const runDeferred = async () => {
-    const { VdPluginManager } = await import("@core/vendetta/plugins");
+    const { FcPluginManager } = await import("@core/firecord/plugins");
     const { initPlugins, updatePlugins } = await import("@lib/addons/plugins");
 
-    // Initialize Vendetta plugins (may start many plugins) — do not block UI.
-    VdPluginManager.initPlugins()
+    // Initialize Firecord plugins (may start many plugins) — do not block UI.
+    FcPluginManager.initPlugins()
       .then((u) => lib.unload.push(u))
-      .catch((e) => logger.log("Vendetta init failed:", e));
+      .catch((e) => logger.log("Firecord init failed:", e));
 
     // Start FireCord (Bunny) plugins now without forcing repository updates.
     // Plugin repository fetching is deferred so the app can finish launching first.

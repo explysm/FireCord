@@ -1,38 +1,38 @@
-import { VdPluginManager, VendettaPlugin } from "@core/vendetta/plugins";
-import { useProxy, createProxy } from "@core/vendetta/storage";
+import { FcPluginManager, FirecordPlugin } from "@core/firecord/plugins";
+import { useProxy, createProxy } from "@core/firecord/storage";
 
 import { UnifiedPluginModel } from ".";
 
 export default function unifyVdPlugin(
-  vdPlugin: VendettaPlugin,
+  vdPlugin: FirecordPlugin,
 ): UnifiedPluginModel {
   return {
     id: vdPlugin.id,
     name: vdPlugin.manifest.name,
     description: vdPlugin.manifest.description,
     authors: vdPlugin.manifest.authors,
-    icon: vdPlugin.manifest.vendetta?.icon,
+    icon: vdPlugin.manifest.firecord?.icon,
 
     getBadges() {
       return [];
     },
     isEnabled: () => vdPlugin.enabled,
     isInstalled: () =>
-      Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
+      Boolean(vdPlugin && FcPluginManager.plugins[vdPlugin.id]),
     usePluginState() {
       const dummyProxy = createProxy({}).proxy;
-      useProxy(VdPluginManager.plugins[vdPlugin.id] ?? dummyProxy);
+      useProxy(FcPluginManager.plugins[vdPlugin.id] ?? dummyProxy);
     },
     toggle(start: boolean) {
       start
-        ? VdPluginManager.startPlugin(vdPlugin.id)
-        : VdPluginManager.stopPlugin(vdPlugin.id);
+        ? FcPluginManager.startPlugin(vdPlugin.id)
+        : FcPluginManager.stopPlugin(vdPlugin.id);
     },
     resolveSheetComponent() {
-      return import("../sheets/PluginInfoActionSheet");
+      return import("../sheets/FcPluginInfoActionSheet");
     },
     getPluginSettingsComponent() {
-      return VdPluginManager.getSettings(vdPlugin.id);
+      return FcPluginManager.getSettings(vdPlugin.id);
     },
   };
 }

@@ -4,7 +4,7 @@ import {
   createStorage,
   purgeStorage,
   wrapSync,
-} from "@core/vendetta/storage";
+} from "@core/firecord/storage";
 import { Author } from "@lib/addons/types";
 import { settings } from "@lib/api/settings";
 import { safeFetch } from "@lib/utils";
@@ -17,7 +17,7 @@ type EvaledPlugin = {
   settings: React.ComponentType<unknown>;
 };
 
-// See https://github.com/vendetta-mod/polymanifest
+// See https://github.com/firecord-mod/polymanifest
 interface PluginManifest {
   name: string;
   description: string;
@@ -25,12 +25,12 @@ interface PluginManifest {
   main: string;
   hash: string;
   // Vendor-specific field, contains our own data
-  vendetta?: {
+  firecord?: {
     icon?: string;
   };
 }
 
-export interface VendettaPlugin {
+export interface FirecordPlugin {
   id: string;
   manifest: PluginManifest;
   enabled: boolean;
@@ -39,13 +39,13 @@ export interface VendettaPlugin {
 }
 
 const plugins = wrapSync(
-  createStorage<Record<string, VendettaPlugin>>(
-    createMMKVBackend("VENDETTA_PLUGINS"),
+  createStorage<Record<string, FirecordPlugin>>(
+    createMMKVBackend("FIRE_CORD_PLUGINS"),
   ),
 );
 const pluginInstance: Record<string, EvaledPlugin> = {};
 
-export const VdPluginManager = {
+export const FcPluginManager = {
   plugins,
   async pluginFetch(url: string) {
     // was causing problems, dumb me with redirections
@@ -112,9 +112,9 @@ export const VdPluginManager = {
   /**
    * @internal
    */
-  async evalPlugin(plugin: VendettaPlugin) {
-    const vendettaForPlugins = {
-      ...window.vendetta,
+  async evalPlugin(plugin: FirecordPlugin) {
+    const firecordForPlugins = {
+      ...window.bunny,
       plugin: {
         id: plugin.id,
         manifest: plugin.manifest,
@@ -125,9 +125,9 @@ export const VdPluginManager = {
       },
       logger: new LoggerClass(`FireCord » ${plugin.manifest.name}`),
     };
-    const pluginString = `vendetta=>{return ${plugin.js}}\n//# sourceURL=${plugin.id}`;
+    const pluginString = `firecord=>{return ${plugin.js}}\n//# sourceURL=${plugin.id}`;
 
-    const raw = (0, eval)(pluginString)(vendettaForPlugins);
+    const raw = (0, eval)(pluginString)(firecordForPlugins);
     const ret = typeof raw === "function" ? raw() : raw;
     return ret?.default ?? ret ?? {};
   },
@@ -217,11 +217,11 @@ export const VdPluginManager = {
               try {
                 if (!plugins[id]) return;
                 await this.startPlugin(id).catch((e) =>
-                  logger.error(`Vendetta plugin ${id} failed to start:`, e),
+                  logger.error(`Firecord plugin ${id} failed to start:`, e),
                 );
               } catch (err) {
                 logger.error(
-                  `Unexpected error while starting vendetta plugin ${id}:`,
+                  `Unexpected error while starting firecord plugin ${id}:`,
                   err,
                 );
               }
@@ -247,7 +247,7 @@ export const VdPluginManager = {
             });
           } catch (e) {
             logger.error(
-              `Failed background fetch for vendetta plugin ${pl}:`,
+              `Failed background fetch for firecord plugin ${pl}:`,
               e,
             );
           }

@@ -13,9 +13,9 @@ import { clipboard } from "@metro/common";
 import { ComponentProps, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { showToast } from "@ui/toasts";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
-import { VdPluginManager } from "@core/vendetta/plugins";
-import { purgeStorage as purgeVdStorage } from "@core/vendetta/storage";
+import { showConfirmationAlert } from "@core/firecord/alerts";
+import { FcPluginManager } from "@core/firecord/plugins";
+import { purgeStorage as purgeVdStorage } from "@core/firecord/storage";
 import { semanticColors } from "@ui/color";
 
 import { PluginInfoActionSheetProps } from "./common";
@@ -39,16 +39,16 @@ export default function PluginInfoActionSheet({
   const [loading, setLoading] = useState(false);
 
   // Determine plugin type
-  const isVendettaPlugin = plugin.id.includes("/");
+  const isFirecordPlugin = plugin.id.includes("/");
   const isCorePlugin =
-    plugin.id.startsWith("bunny.") || plugin.id.startsWith("vendetta.");
+    plugin.id.startsWith("bunny.") || plugin.id.startsWith("firecord.");
 
   const copyPluginUrl = () => {
     // Get appropriate URL for plugin type
     let url = plugin.id;
 
-    if (isVendettaPlugin) {
-      // Vendetta plugins use the full URL as ID
+    if (isFirecordPlugin) {
+      // Firecord plugins use the full URL as ID
       url = plugin.id;
     } else {
       try {
@@ -75,14 +75,13 @@ export default function PluginInfoActionSheet({
   const refetchPlugin = async () => {
     setLoading(true);
     try {
-      if (isVendettaPlugin) {
-        // For Vendetta plugins
-        const vdPlugin = VdPluginManager.plugins[plugin.id];
-        if (vdPlugin.enabled) VdPluginManager.stopPlugin(plugin.id, false);
-
-        await VdPluginManager.fetchPlugin(plugin.id);
-        if (vdPlugin.enabled) await VdPluginManager.startPlugin(plugin.id);
-
+      if (isFirecordPlugin) {
+        // For Firecord plugins
+        const vdPlugin = FcPluginManager.plugins[plugin.id];
+                    if (vdPlugin.enabled) FcPluginManager.stopPlugin(plugin.id, false);
+        
+                    await FcPluginManager.fetchPlugin(plugin.id);
+                    if (vdPlugin.enabled) await FcPluginManager.startPlugin(plugin.id);
         showToast("Plugin refreshed successfully");
       } else {
         // For Bunny plugins
@@ -108,14 +107,14 @@ export default function PluginInfoActionSheet({
       onConfirm: async () => {
         hideSheet("PluginInfoActionSheet");
         try {
-          if (isVendettaPlugin) {
-            // For Vendetta plugins
-            const vdPlugin = VdPluginManager.plugins[plugin.id];
-            if (vdPlugin.enabled) VdPluginManager.stopPlugin(plugin.id, false);
+          if (isFirecordPlugin) {
+            // For Firecord plugins
+            const vdPlugin = FcPluginManager.plugins[plugin.id];
+            if (vdPlugin.enabled) FcPluginManager.stopPlugin(plugin.id, false);
 
             await purgeVdStorage(plugin.id);
 
-            if (vdPlugin.enabled) await VdPluginManager.startPlugin(plugin.id);
+            if (vdPlugin.enabled) await FcPluginManager.startPlugin(plugin.id);
           } else {
             // For Bunny plugins
             await purgeStorage(`plugins/storage/${plugin.id}.json`);
@@ -145,9 +144,9 @@ export default function PluginInfoActionSheet({
       onConfirm: async () => {
         hideSheet("PluginInfoActionSheet");
         try {
-          if (isVendettaPlugin) {
-            // For Vendetta plugins
-            await VdPluginManager.removePlugin(plugin.id);
+          if (isFirecordPlugin) {
+            // For Firecord plugins
+            await FcPluginManager.removePlugin(plugin.id);
           } else {
             // For Bunny plugins
             await uninstallPlugin(plugin.id);

@@ -1,4 +1,4 @@
-import { Emitter } from "@core/vendetta/Emitter";
+import { Emitter } from "@core/firecord/Emitter";
 import type { Observable as ObservableType, ObserverOptions } from "@gullerya/object-observer";
 import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { debounce } from "es-toolkit";
@@ -84,7 +84,7 @@ export function createStorageAndCallback<T extends object = {}>(
     const callback = (data: any) => {
         const proxy = new Proxy(getObservableRuntime().from(data), {
             get(target, prop, receiver) {
-                if (prop === Symbol.for("vendetta.storage.emitter")) {
+                if (prop === Symbol.for("firecord.storage.emitter")) {
                     if (emitter) return emitter;
                     emitter = new Emitter();
 

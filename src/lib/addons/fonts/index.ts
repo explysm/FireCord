@@ -1,4 +1,4 @@
-import { awaitStorage, createMMKVBackend, createStorage, wrapSync } from "@core/vendetta/storage";
+import { awaitStorage, createMMKVBackend, createStorage, wrapSync } from "@core/firecord/storage";
 import { clearFolder, downloadFile, fileExists, removeFile, writeFile } from "@lib/api/native/fs";
 import { safeFetch } from "@lib/utils";
 

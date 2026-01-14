@@ -292,7 +292,7 @@ export function connectRdt(url: string, quiet?: boolean) {
         if (!quiet) showToast(err, findAssetId("CircleXIcon-primary"));
     });
 
-    const devTools = window[getReactDevToolsProp() || "__vendetta_rdc"];
+    const devTools = window[getReactDevToolsProp() || "__firecord_rdc"];
     if (devTools?.connectToDevTools) {
         devTools.connectToDevTools({
             websocket: ws,
@@ -344,7 +344,7 @@ export function getDebugInfo() {
     const rnVer = PlatformConstants.reactNativeVersion;
 
     return {
-        vendetta: {
+        firecord: {
             version: versionHash.split("-")[0],
             loader: getLoaderName(),
         },
