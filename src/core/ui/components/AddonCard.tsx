@@ -12,7 +12,7 @@ import {
 import { findByProps } from "@metro/wrappers";
 import { semanticColors } from "@ui/color";
 import { createStyles, TextStyleSheet } from "@ui/styles";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Image } from "react-native";
 
 const { hideActionSheet } = lazyDestructure(() =>
   findByProps("openLazy", "hideActionSheet"),
@@ -21,7 +21,6 @@ const { showSimpleActionSheet } = lazyDestructure(() =>
   findByProps("showSimpleActionSheet"),
 );
 
-// TODO: These styles work weirdly. Low DPI Has cramped text. Fix?
 const useStyles = createStyles({
   card: {
     backgroundColor: semanticColors?.CARD_SECONDARY_BG,
@@ -34,7 +33,8 @@ const useStyles = createStyles({
   headerLeading: {
     flexDirection: "column",
     justifyContent: "center",
-    scale: 1.2,
+    flex: 1,
+    paddingRight: 12,
   },
   headerTrailing: {
     display: "flex",
@@ -43,7 +43,7 @@ const useStyles = createStyles({
     alignItems: "center",
   },
   headerLabel: {
-    ...TextStyleSheet["heading-md/semibold"],
+    ...TextStyleSheet["heading-lg/semibold"],
     color: semanticColors.MOBILE_TEXT_HEADING_PRIMARY,
   },
   headerSubtitle: {
@@ -58,15 +58,6 @@ const useStyles = createStyles({
     flexDirection: "row-reverse",
     alignItems: "center",
     gap: 5,
-  },
-  iconStyle: {
-    tintColor: semanticColors.INTERACTIVE_ICON_DEFAULT,
-    opacity: 0.2,
-    height: 64,
-    width: 64,
-    left: void 0,
-    right: "30%",
-    top: "-10%",
   },
 });
 
@@ -107,13 +98,19 @@ export default function AddonCard(props: CardProps) {
     <Card>
       <Stack spacing={16}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {props.headerIcon && (
+            <Image
+              style={{ width: 32, height: 32, marginRight: 12, borderRadius: 8 }}
+              source={findAssetId(props.headerIcon)}
+            />
+          )}
           <View style={styles.headerLeading}>
-            <Text style={styles.headerLabel}>{props.headerLabel}</Text>
+            <Text numberOfLines={1} style={styles.headerLabel}>{props.headerLabel}</Text>
             {props.headerSublabel && (
-              <Text style={styles.headerSubtitle}>{props.headerSublabel}</Text>
+              <Text numberOfLines={1} style={styles.headerSubtitle}>{props.headerSublabel}</Text>
             )}
           </View>
-          <View style={[styles.headerTrailing, { marginLeft: "auto" }]}>
+          <View style={styles.headerTrailing}>
             <View style={styles.actions}>
               {props.overflowActions && (
                 <IconButton

@@ -18,6 +18,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
   return (
     <AddonCard
       headerLabel={theme.data.name}
+      headerIcon="PaintPaletteIcon"
       headerSublabel={
         authors ? `by ${authors.map((i) => i.name).join(", ")}` : ""
       }
