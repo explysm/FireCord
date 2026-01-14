@@ -15,6 +15,7 @@ import { showToast } from "@lib/ui/toasts";
 import { showConfirmationAlert, showInputAlert } from "@core/vendetta/alerts";
 import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes } from "@lib/addons/themes";
+import { fonts } from "@lib/addons/fonts";
 import { logger } from "@lib/utils/logger";
 import { NativeCacheModule } from "@lib/api/native/modules";
 import { UserData } from "./types";
@@ -108,7 +109,7 @@ export default function CloudSyncSettings() {
 
             showConfirmationAlert({
                 title: "Import Data?",
-                content: `This will install ${Object.keys(data.plugins).length} plugins and ${Object.keys(data.themes).length} themes.`,
+                content: `This will install ${Object.keys(data.plugins).length} plugins, ${Object.keys(data.themes).length} themes, and ${Object.keys(data.fonts.installed).length} fonts.`,
                 onConfirm: async () => {
                     for (const [id, pluginData] of Object.entries(data.plugins)) {
                         if (!VdPluginManager.plugins[id]) {
@@ -126,6 +127,17 @@ export default function CloudSyncSettings() {
                                 await (require("@lib/addons/themes").fetchTheme(id, themeData.enabled));
                             } catch (e) {
                                 logger.error(`Failed to import theme ${id}`, e);
+                            }
+                        }
+                    }
+                    for (const [name, fontData] of Object.entries(data.fonts.installed)) {
+                        if (!fonts[name]) {
+                            try {
+                                const { saveFont, selectFont } = require("@lib/addons/fonts");
+                                await saveFont(fontData.data, fontData.enabled);
+                                if (fontData.enabled) await selectFont(name);
+                            } catch (e) {
+                                logger.error(`Failed to import font ${name}`, e);
                             }
                         }
                     }

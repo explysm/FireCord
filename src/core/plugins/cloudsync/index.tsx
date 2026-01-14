@@ -2,6 +2,7 @@ import { defineCorePlugin } from "..";
 import { useProxy, createStorage, createMMKVBackend, wrapSync } from "@core/vendetta/storage";
 import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes } from "@lib/addons/themes";
+import { fonts } from "@lib/addons/fonts";
 import { logger } from "@lib/utils/logger";
 import { UserData } from "./types";
 import { defaultHost, defaultClientId } from "./constants";
@@ -19,13 +20,12 @@ export const vstorage = wrapSync(createStorage<CloudSyncStorage>(createMMKVBacke
     clientId: defaultClientId
 })));
 
-export async function grabEverything(): Promise<UserData> {
+async function grabEverything(): Promise<UserData> {
     const sync = {
         plugins: {},
         themes: {},
         fonts: {
             installed: {},
-            custom: [],
         },
     } as UserData;
 
@@ -40,6 +40,14 @@ export async function grabEverything(): Promise<UserData> {
     for (const item of Object.values(themes)) {
         sync.themes[item.id] = {
             enabled: item.selected,
+        };
+    }
+
+    const { __selected, ...installedFonts } = fonts;
+    for (const [name, data] of Object.entries(installedFonts)) {
+        sync.fonts.installed[name] = {
+            enabled: __selected === name,
+            data: data as any,
         };
     }
 
