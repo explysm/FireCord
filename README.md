@@ -5,18 +5,16 @@ Bundle based on Kettu/ShiggyCord, made just for fun
 ## Installing
 
 ### Android
-FireCord currently **does not** have a dedicated manager. To use FireCord, follow the instructions below:
 
-Get Shiggy manager: 
+#### No root
+> Download and install Fire Manager from [explysm/FireManager](https://github.com/explysm/firemanager)
+> Click "Install" and watch the flames arise. 
+> (We highly suggest using version ```305012``` or ```306013``` by going to Fire Manager > settings > other > custom version, as these two versions are the most compatible with themes/plugins while still being some-what new.)
 
-[Shiggy Manager](https://github.com/kmmiio99o/ShiggyManager)
-
-Install v305012/306013 by clicking "new install" and setting the version channel to "custom." It's also recommended to change the package name to ```dev.fire.cord``` & changing the app name to "FireCord."
-
-After installation, open up FireCord/ShiggyCord (whatever you named it) and shake your phone to make the ShiggyCord Recovery appear. 
-
-Next, click "Load Custom Bundle" and enable Custom Url. Input the following:
-```https://github.com/explysm/FireCord/releases/latest/download/firecord.js```
+#### Root
+> Note:
+> You must have an lsposed loader module for your root type. 
+> Download and install the FireXposed lsposed module from [explysm/FireXposed](https://github.com/explysm/firexposed), after that, restart your phone and FireCord will be installed in offical Discord.
 
 ### Android/iOS
 - **Injecting bundle:**
