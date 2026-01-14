@@ -66,35 +66,36 @@ export default function CloudSyncSettings() {
         });
     };
 
-    const handleSave = async () => {
-        if (!vstorage.token) {
-            showToast("Not authorized", findAssetId("Small"));
-            return;
-        }
-        setIsBusy(true);
-        try {
-            const data = await grabEverything();
-            const host = vstorage.host || defaultHost;
-            const res = await fetch(`${host}api/data`, {
-                method: "PUT",
-                body: JSON.stringify(data),
-                headers: {
-                    "content-type": "application/json",
-                    "authorization": vstorage.token
-                },
-            });
-            if (res.ok) {
-                showToast("Synced to cloud", findAssetId("Check"));
-            } else {
-                throw new Error(await res.text());
+        const handleSave = async () => {
+            if (!vstorage.token) {
+                showToast("Not authorized", findAssetId("Small"));
+                return;
             }
-        } catch (e) {
-            logger.error("CloudSync save failed", e);
-            showToast("Failed to save", findAssetId("Small"));
-        } finally {
-            setIsBusy(false);
-        }
-    };
+            setIsBusy(true);
+            try {
+                const data = await grabEverything();
+                const host = vstorage.host || defaultHost;
+                const res = await fetch(`${host}api/data`, {
+                    method: "PUT",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "content-type": "application/json",
+                        "authorization": vstorage.token
+                    },
+                });
+                if (res.ok) {
+                    showToast("Synced to cloud", findAssetId("Check"));
+                } else {
+                    const text = await res.text();
+                    throw new Error(text || `Status ${res.status}`);
+                }
+            } catch (e: any) {
+                logger.error("CloudSync save failed", e);
+                showToast(`Failed to save: ${e.message}`, findAssetId("Small"));
+            } finally {
+                setIsBusy(false);
+            }
+        };
 
     const handleImport = async () => {
         if (!vstorage.token) return;

@@ -1,5 +1,4 @@
-import { defineCorePlugin } from "..";
-import { useProxy, createStorage, createMMKVBackend, wrapSync } from "@core/vendetta/storage";
+import { awaitStorage, useProxy, createStorage, createMMKVBackend, wrapSync } from "@core/vendetta/storage";
 import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes } from "@lib/addons/themes";
 import { fonts } from "@lib/addons/fonts";
@@ -21,6 +20,11 @@ export const vstorage = wrapSync(createStorage<CloudSyncStorage>(createMMKVBacke
 })));
 
 export async function grabEverything(): Promise<UserData> {
+    logger.log("CloudSync: Grabbing everything...");
+    
+    // Ensure all storages are loaded
+    await awaitStorage(vstorage, VdPluginManager.plugins, themes, fonts);
+
     const sync = {
         plugins: {},
         themes: {},
@@ -29,28 +33,41 @@ export async function grabEverything(): Promise<UserData> {
         },
     } as UserData;
 
-    for (const item of Object.values(VdPluginManager.plugins)) {
-        const storage = await createMMKVBackend(item.id).get();
-        sync.plugins[item.id] = {
-            enabled: item.enabled,
-            storage: JSON.stringify(storage),
-        };
+    try {
+        for (const item of Object.values(VdPluginManager.plugins)) {
+            if (!item.id) continue;
+            try {
+                const storage = await createMMKVBackend(item.id).get();
+                sync.plugins[item.id] = {
+                    enabled: item.enabled,
+                    storage: JSON.stringify(storage),
+                };
+            } catch (e) {
+                logger.error(`CloudSync: Failed to grab storage for plugin ${item.id}`, e);
+            }
+        }
+
+        for (const item of Object.values(themes)) {
+            if (!item.id) continue;
+            sync.themes[item.id] = {
+                enabled: item.selected,
+            };
+        }
+
+        const { __selected, ...installedFonts } = fonts as any;
+        for (const [name, data] of Object.entries(installedFonts)) {
+            if (name.startsWith("__")) continue;
+            sync.fonts.installed[name] = {
+                enabled: __selected === name,
+                data: data as any,
+            };
+        }
+    } catch (e) {
+        logger.error("CloudSync: Error during grabEverything", e);
+        throw e;
     }
 
-    for (const item of Object.values(themes)) {
-        sync.themes[item.id] = {
-            enabled: item.selected,
-        };
-    }
-
-    const { __selected, ...installedFonts } = fonts;
-    for (const [name, data] of Object.entries(installedFonts)) {
-        sync.fonts.installed[name] = {
-            enabled: __selected === name,
-            data: data as any,
-        };
-    }
-
+    logger.log(`CloudSync: Grabbed ${Object.keys(sync.plugins).length} plugins, ${Object.keys(sync.themes).length} themes, ${Object.keys(sync.fonts.installed).length} fonts`);
     return sync;
 }
 
