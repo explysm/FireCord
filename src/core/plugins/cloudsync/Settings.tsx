@@ -110,7 +110,7 @@ export default function CloudSyncSettings() {
 
             showConfirmationAlert({
                 title: "Import Data?",
-                content: `This will install ${Object.keys(data.plugins).length} plugins, ${Object.keys(data.themes).length} themes, and ${Object.keys(data.fonts.installed).length} fonts.`,
+                content: `This will install ${Object.keys(data.plugins).length} plugins, ${Object.keys(data.themes).length} themes, and ${Object.keys(data.fonts.installed).length + (data.fonts.custom?.length ?? 0)} fonts.`,
                 onConfirm: async () => {
                     for (const [id, pluginData] of Object.entries(data.plugins)) {
                         if (!VdPluginManager.plugins[id]) {
@@ -139,6 +139,20 @@ export default function CloudSyncSettings() {
                                 if (fontData.enabled) await selectFont(name);
                             } catch (e) {
                                 logger.error(`Failed to import font ${name}`, e);
+                            }
+                        }
+                    }
+                    if (data.fonts.custom) {
+                        for (const fontData of data.fonts.custom) {
+                            if (!fonts[fontData.name]) {
+                                try {
+                                    const { saveFont, selectFont } = require("@lib/addons/fonts");
+                                    const { enabled, ...cleanData } = fontData;
+                                    await saveFont(cleanData, enabled);
+                                    if (enabled) await selectFont(fontData.name);
+                                } catch (e) {
+                                    logger.error(`Failed to import custom font ${fontData.name}`, e);
+                                }
                             }
                         }
                     }

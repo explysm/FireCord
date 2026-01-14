@@ -30,6 +30,7 @@ export async function grabEverything(): Promise<UserData> {
         themes: {},
         fonts: {
             installed: {},
+            custom: [],
         },
     } as UserData;
 
@@ -57,10 +58,18 @@ export async function grabEverything(): Promise<UserData> {
         const { __selected, ...installedFonts } = fonts as any;
         for (const [name, data] of Object.entries(installedFonts)) {
             if (name.startsWith("__")) continue;
-            sync.fonts.installed[name] = {
-                enabled: __selected === name,
-                data: data as any,
-            };
+            const fontDef = data as FontDefinition;
+            if (fontDef.source) {
+                sync.fonts.installed[name] = {
+                    enabled: __selected === name,
+                    data: fontDef,
+                };
+            } else {
+                sync.fonts.custom.push({
+                    ...fontDef,
+                    enabled: __selected === name,
+                });
+            }
         }
     } catch (e) {
         logger.error("CloudSync: Error during grabEverything", e);

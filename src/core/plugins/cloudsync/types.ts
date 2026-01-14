@@ -5,5 +5,6 @@ export interface UserData {
 	themes: Record<string, { enabled: boolean }>;
 	fonts: {
 		installed: Record<string, { enabled: boolean; data: FontDefinition }>;
+		custom: (FontDefinition & { enabled: boolean })[];
 	};
 }
