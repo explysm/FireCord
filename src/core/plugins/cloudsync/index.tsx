@@ -20,7 +20,7 @@ export const vstorage = wrapSync(createStorage<CloudSyncStorage>(createMMKVBacke
     clientId: defaultClientId
 })));
 
-async function grabEverything(): Promise<UserData> {
+export async function grabEverything(): Promise<UserData> {
     const sync = {
         plugins: {},
         themes: {},
