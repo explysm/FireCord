@@ -1,10 +1,10 @@
 import { awaitStorage, useProxy, createStorage, createMMKVBackend, wrapSync } from "@core/vendetta/storage";
-import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes } from "@lib/addons/themes";
-import { fonts } from "@lib/addons/fonts";
+import { fonts, FontDefinition } from "@lib/addons/fonts";
 import { logger } from "@lib/utils/logger";
 import { UserData } from "./types";
 import { defaultHost, defaultClientId } from "./constants";
+import { defineCorePlugin } from "..";
 
 export interface CloudSyncStorage {
     token?: string;
@@ -20,6 +20,7 @@ export const vstorage = wrapSync(createStorage<CloudSyncStorage>(createMMKVBacke
 })));
 
 export async function grabEverything(): Promise<UserData> {
+    const { VdPluginManager } = require("@core/vendetta/plugins");
     logger.log("CloudSync: Grabbing everything...");
     
     // Ensure all storages are loaded
@@ -35,7 +36,7 @@ export async function grabEverything(): Promise<UserData> {
     } as UserData;
 
     try {
-        for (const item of Object.values(VdPluginManager.plugins)) {
+        for (const item of Object.values(VdPluginManager.plugins) as any[]) {
             if (!item.id) continue;
             try {
                 const storage = await createMMKVBackend(item.id).get();
@@ -48,7 +49,7 @@ export async function grabEverything(): Promise<UserData> {
             }
         }
 
-        for (const item of Object.values(themes)) {
+        for (const item of Object.values(themes) as any[]) {
             if (!item.id) continue;
             sync.themes[item.id] = {
                 enabled: item.selected,
@@ -94,6 +95,7 @@ export default defineCorePlugin({
     },
 
     start() {
+        const { VdPluginManager } = require("@core/vendetta/plugins");
         const emitterSymbol = Symbol.for("vendetta.storage.emitter");
         const autoSync = async () => {
             if (!vstorage.autoSync || !vstorage.token) return;

@@ -13,7 +13,6 @@ import { findAssetId } from "@lib/api/assets";
 import { useProxy } from "@core/vendetta/storage";
 import { showToast } from "@lib/ui/toasts";
 import { showConfirmationAlert, showInputAlert } from "@core/vendetta/alerts";
-import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes } from "@lib/addons/themes";
 import { fonts } from "@lib/addons/fonts";
 import { logger } from "@lib/utils/logger";
@@ -112,6 +111,7 @@ export default function CloudSyncSettings() {
                 title: "Import Data?",
                 content: `This will install ${Object.keys(data.plugins).length} plugins, ${Object.keys(data.themes).length} themes, and ${Object.keys(data.fonts.installed).length + (data.fonts.custom?.length ?? 0)} fonts.`,
                 onConfirm: async () => {
+                    const { VdPluginManager } = require("@core/vendetta/plugins");
                     for (const [id, pluginData] of Object.entries(data.plugins)) {
                         if (!VdPluginManager.plugins[id]) {
                             try {
