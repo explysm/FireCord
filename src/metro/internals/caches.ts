@@ -25,16 +25,13 @@ function buildInitCache() {
         polyfillIndex: {} as Record<string, ModulesMap | undefined>
     } as const;
 
-    // Force load all modules so useful modules are pre-cached. Add a minor
-    // delay so the cache is initialized before the modules are loaded.
-    setTimeout(() => {
-        for (const id in window.modules) {
-            require("./modules").requireModule(id);
-        }
-    }, 100);
-
     _metroCache = cache;
     return cache;
+}
+
+/** @internal */
+export function persistCache() {
+    saveCache.flush();
 }
 
 /** @internal */
