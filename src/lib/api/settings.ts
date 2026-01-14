@@ -13,6 +13,7 @@ export interface Settings {
         currentThemeId?: string;
     };
     enableEvalCommand?: boolean;
+    compactMode?: boolean;
 }
 
 export interface LoaderConfig {

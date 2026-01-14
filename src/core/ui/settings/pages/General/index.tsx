@@ -2,9 +2,7 @@ import { isSafeMode, toggleSafeMode } from "@core/debug/safeMode";
 import { Strings } from "@core/i18n";
 import { firecordIcon } from "@core/ui/settings";
 import About from "@core/ui/settings/pages/General/About";
-import { VdPluginManager } from "@core/vendetta/plugins";
-import { themes } from "@lib/addons/themes";
-import { fonts } from "@lib/addons/fonts";
+import Performance from "@core/ui/settings/pages/General/Performance";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { getDebugInfo } from "@lib/api/debug";
@@ -22,6 +20,7 @@ import {
   TableRow,
   TableRowGroup,
   TableSwitchRow,
+  TableRowIcon,
   Text,
 } from "@metro/common/components";
 import { Linking, ScrollView, View, TouchableOpacity } from "react-native";
@@ -215,6 +214,33 @@ export default function General() {
                 />,
               );
             }}
+          />
+        </TableRowGroup>
+
+        <TableRowGroup title="UI Customization">
+          <TableSwitchRow
+            label="Compact Mode"
+            subLabel="Use smaller cards for plugins and themes"
+            icon={<TableRowIcon source={findAssetId("SettingsIcon")} />}
+            value={settings.compactMode}
+            onValueChange={(v: boolean) => {
+              settings.compactMode = v;
+            }}
+          />
+        </TableRowGroup>
+
+        <TableRowGroup title="Performance">
+          <TableRow
+            arrow
+            label="Startup Insights"
+            subLabel="View plugin load times"
+            icon={<TableRowIcon source={findAssetId("ActivitiesIcon")} />}
+            onPress={() =>
+              navigation.push("SHIGGYCORD_CUSTOM_PAGE", {
+                title: "Startup Performance",
+                render: () => <Performance />,
+              })
+            }
           />
         </TableRowGroup>
 

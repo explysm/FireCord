@@ -28,6 +28,7 @@ export const corePluginInstances = new Map<string, t.PluginInstanceInternal>();
 
 export const registeredPlugins = new Map<string, t.BunnyPluginManifest>();
 export const pluginInstances = new Map<string, t.PluginInstanceInternal>();
+export const pluginStartTimes = new Map<string, number>();
 export const apiObjects = new Map<
   string,
   ReturnType<typeof createBunnyPluginApi>
@@ -596,7 +597,9 @@ export async function startPlugin(
 
   // Stage three (of external plugins), start the plugin
   try {
+    const start = performance.now();
     pluginInstance.start?.();
+    pluginStartTimes.set(id, performance.now() - start);
 
     pluginSettings[id]!.enabled = true;
   } catch (error) {

@@ -1,4 +1,5 @@
 import { findAssetId } from "@lib/api/assets";
+import { settings } from "@lib/api/settings";
 import { lazyDestructure } from "@lib/utils/lazy";
 import {
   Card,
@@ -46,8 +47,16 @@ const useStyles = createStyles({
     ...TextStyleSheet["heading-lg/semibold"],
     color: semanticColors.MOBILE_TEXT_HEADING_PRIMARY,
   },
+  headerLabelCompact: {
+    ...TextStyleSheet["heading-md/semibold"],
+    color: semanticColors.MOBILE_TEXT_HEADING_PRIMARY,
+  },
   headerSubtitle: {
     ...TextStyleSheet["text-md/semibold"],
+    color: semanticColors.TEXT_MUTED,
+  },
+  headerSubtitleCompact: {
+    ...TextStyleSheet["text-sm/semibold"],
     color: semanticColors.TEXT_MUTED,
   },
   descriptionLabel: {
@@ -93,21 +102,22 @@ interface CardProps {
 
 export default function AddonCard(props: CardProps) {
   const styles = useStyles();
+  const isCompact = settings.compactMode;
 
   return (
     <Card>
-      <Stack spacing={16}>
+      <Stack spacing={isCompact ? 8 : 16}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {props.headerIcon && (
             <Image
-              style={{ width: 32, height: 32, marginRight: 12, borderRadius: 8 }}
+              style={{ width: isCompact ? 24 : 32, height: isCompact ? 24 : 32, marginRight: 12, borderRadius: 8 }}
               source={findAssetId(props.headerIcon)}
             />
           )}
           <View style={styles.headerLeading}>
-            <Text numberOfLines={1} style={styles.headerLabel}>{props.headerLabel}</Text>
+            <Text numberOfLines={1} style={isCompact ? styles.headerLabelCompact : styles.headerLabel}>{props.headerLabel}</Text>
             {props.headerSublabel && (
-              <Text numberOfLines={1} style={styles.headerSubtitle}>{props.headerSublabel}</Text>
+              <Text numberOfLines={1} style={isCompact ? styles.headerSubtitleCompact : styles.headerSubtitle}>{props.headerSublabel}</Text>
             )}
           </View>
           <View style={styles.headerTrailing}>
@@ -132,7 +142,7 @@ export default function AddonCard(props: CardProps) {
                       })),
                     })
                   }
-                  size="sm"
+                  size={isCompact ? "xs" : "sm"}
                   variant="secondary"
                   icon={findAssetId("CircleInformationIcon-primary")}
                 />
@@ -141,7 +151,7 @@ export default function AddonCard(props: CardProps) {
                 <IconButton
                   onPress={onPress}
                   disabled={disabled}
-                  size="sm"
+                  size={isCompact ? "xs" : "sm"}
                   variant="secondary"
                   icon={findAssetId(icon)}
                 />
@@ -152,6 +162,7 @@ export default function AddonCard(props: CardProps) {
                 <FormSwitch
                   value={props.toggleValue()}
                   onValueChange={props.onToggleChange}
+                  style={isCompact ? { transform: [{ scale: 0.8 }] } : undefined}
                 />
               ) : (
                 <TouchableOpacity
@@ -159,12 +170,12 @@ export default function AddonCard(props: CardProps) {
                     props.onToggleChange?.(!props.toggleValue());
                   }}
                 >
-                  <FormRadio selected={props.toggleValue()} />
+                  <FormRadio selected={props.toggleValue()} style={isCompact ? { transform: [{ scale: 0.8 }] } : undefined} />
                 </TouchableOpacity>
               ))}
           </View>
         </View>
-        {props.descriptionLabel && (
+        {!isCompact && props.descriptionLabel && (
           <Text variant="text-md/medium">{props.descriptionLabel}</Text>
         )}
       </Stack>

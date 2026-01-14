@@ -3,6 +3,7 @@ import { CardWrapper } from "@core/ui/components/AddonCard";
 import { UnifiedPluginModel } from "@core/ui/settings/pages/Plugins/models";
 import { usePluginCardStyles } from "@core/ui/settings/pages/Plugins/usePluginCardStyles";
 import { findAssetId } from "@lib/api/assets";
+import { settings } from "@lib/api/settings";
 import {
   Card,
   IconButton,
@@ -28,6 +29,7 @@ function getHighlightColor(): import("react-native").ColorValue {
 function Title() {
   const styles = usePluginCardStyles();
   const { plugin, result } = useCardContext();
+  const isCompact = settings.compactMode;
 
   // could be empty if the plugin name is irrelevant!
   const highlightedNode = result[0].highlight((m, i) => (
@@ -39,14 +41,14 @@ function Title() {
   const icon = plugin.icon && findAssetId(plugin.icon);
 
   const textNode = (
-    <Text numberOfLines={1} variant="heading-lg/semibold">
+    <Text numberOfLines={1} variant={isCompact ? "heading-md/semibold" : "heading-lg/semibold"}>
       {highlightedNode.length ? highlightedNode : plugin.name}
     </Text>
   );
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-      {icon && <Image style={styles.smallIcon} source={icon} />}
+      {icon && <Image style={isCompact ? [styles.smallIcon, { width: 24, height: 24 }] : styles.smallIcon} source={icon} />}
       {textNode}
     </View>
   );
@@ -55,6 +57,7 @@ function Title() {
 function Authors() {
   const { plugin, result } = useCardContext();
   const styles = usePluginCardStyles();
+  if (settings.compactMode) return null;
 
   if (!plugin.authors) return null;
 
@@ -91,6 +94,7 @@ function Authors() {
 
 function Description() {
   const { plugin, result } = useCardContext();
+  if (settings.compactMode) return null;
 
   // could be empty if the description is irrelevant with the search!
   const highlightedNode = result[1].highlight((m, i) => (
@@ -109,11 +113,12 @@ function Description() {
 const Actions = () => {
   const { plugin } = useCardContext();
   const navigation = NavigationNative.useNavigation();
+  const isCompact = settings.compactMode;
 
   return (
     <View style={{ flexDirection: "row", gap: 6 }}>
       <IconButton
-        size="sm"
+        size={isCompact ? "xs" : "sm"}
         variant="secondary"
         icon={findAssetId("SettingsIcon")}
         disabled={!plugin.getPluginSettingsComponent()}
@@ -125,7 +130,7 @@ const Actions = () => {
         }
       />
       <IconButton
-        size="sm"
+        size={isCompact ? "xs" : "sm"}
         variant="secondary"
         icon={findAssetId("CircleInformationIcon-primary")}
         onPress={() =>
@@ -155,26 +160,28 @@ export default function PluginCard({
   // Protect specific core plugins from being toggled
   const idLower = ((plugin.id || "") as string).toLowerCase();
   const isProtectedCore = idLower.includes("quickinstall");
+  const isCompact = settings.compactMode;
 
   return (
     <CardContext.Provider value={cardContextValue}>
       <Card>
-        <Stack spacing={16}>
+        <Stack spacing={isCompact ? 8 : 16}>
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{ flexDirection: "row", justifyContent: "space-between", alignItems: 'center' }}
           >
             <View style={{ flexShrink: 1 }}>
               <Title />
               <Authors />
             </View>
             <View>
-              <Stack spacing={12} direction="horizontal">
+              <Stack spacing={isCompact ? 8 : 12} direction="horizontal" align="center">
                 <Actions />
                 {/* Dim and disable the switch for protected core plugins */}
                 <View style={{ opacity: isProtectedCore ? 0.45 : 1 }}>
                   <TableSwitch
                     value={plugin.isEnabled()}
                     disabled={isProtectedCore}
+                    style={isCompact ? { transform: [{ scale: 0.8 }] } : undefined}
                     onValueChange={(v: boolean) => {
                       if (isProtectedCore) return;
                       plugin.toggle(v);
