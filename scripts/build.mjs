@@ -30,7 +30,7 @@ let context = null;
 const config = {
   entryPoints: ["src/entry.ts"],
   bundle: true,
-  outfile: "dist/firecord.js",
+  outfile: "dist/firecord-new.js",
   format: "iife",
   splitting: false,
   // Enable minification by default for release builds (when a release-branch is provided).
@@ -75,7 +75,7 @@ const config = {
                 constModules: {
                   globals: {
                     "bunny-build-info": {
-                      version: `"1.0.1"`,
+                      version: `"1.0.0"`,
                     },
                   },
                 },
