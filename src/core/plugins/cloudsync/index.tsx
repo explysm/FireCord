@@ -1,5 +1,5 @@
 import { defineCorePlugin } from "..";
-import { React, NavigationNative } from "@metro/common";
+import { React, NavigationNative, findByProps, findByName } from "@metro/common";
 import { ScrollView, View, ActivityIndicator } from "react-native";
 import { 
     TableRowGroup, 
@@ -23,6 +23,9 @@ import { logger } from "@lib/utils/logger";
 import { NativeCacheModule } from "@lib/api/native/modules";
 import { UserData } from "./types";
 import { defaultHost, defaultClientId, redirectRoute } from "./constants";
+
+const { pushModal, popModal } = findByProps("pushModal", "popModal") as any;
+const OAuth2AuthorizeModal = findByName("OAuth2AuthorizeModal");
 
 interface CloudSyncStorage {
     token?: string;
@@ -61,9 +64,6 @@ async function grabEverything(): Promise<UserData> {
         };
     }
 
-    // TODO: Font syncing logic if needed, fonts addon structure differs slightly
-    // For now we keep it simple for plugins and themes
-
     return sync;
 }
 
@@ -82,6 +82,39 @@ export default defineCorePlugin({
     },
 
     start() {
+        const emitterSymbol = Symbol.for("vendetta.storage.emitter");
+        const autoSync = async () => {
+            if (!vstorage.autoSync || !vstorage.token) return;
+            try {
+                const data = await grabEverything();
+                const host = vstorage.host || defaultHost;
+                await fetch(`${host}api/data`, {
+                    method: "PUT",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "content-type": "application/json",
+                        "authorization": vstorage.token
+                    },
+                });
+            } catch (e) {
+                logger.error("CloudSync auto-save failed", e);
+            }
+        };
+
+        const emitters = {
+            plugins: (VdPluginManager.plugins as any)[emitterSymbol],
+            themes: (themes as any)[emitterSymbol],
+        };
+
+        if (emitters.plugins) {
+            emitters.plugins.on("SET", autoSync);
+            emitters.plugins.on("DEL", autoSync);
+        }
+        if (emitters.themes) {
+            emitters.themes.on("SET", autoSync);
+            emitters.themes.on("DEL", autoSync);
+        }
+
         logger.log("CloudSync started");
     },
 
@@ -92,6 +125,45 @@ export default defineCorePlugin({
     SettingsComponent() {
         useProxy(vstorage);
         const [isBusy, setIsBusy] = React.useState(false);
+
+        const openOauth2Modal = () => {
+            const host = vstorage.host || defaultHost;
+            const clientId = vstorage.clientId || defaultClientId;
+            const redirectUri = `${host}${redirectRoute}`;
+
+            pushModal({
+                key: "oauth2-authorize",
+                modal: {
+                    key: "oauth2-authorize",
+                    modal: OAuth2AuthorizeModal,
+                    animation: "slide-up",
+                    shouldPersistUnderModals: false,
+                    props: {
+                        clientId: clientId,
+                        redirectUri: redirectUri,
+                        scopes: ["identify"],
+                        responseType: "code",
+                        permissions: 0n,
+                        cancelCompletesFlow: false,
+                        callback: async ({ location }: any) => {
+                            if (!location) return;
+                            try {
+                                const res = await fetch(location, {
+                                    headers: { authorization: vstorage.token as string }
+                                });
+                                const token = await res.text();
+                                vstorage.token = token;
+                                showToast("Authorized with CloudSync", findAssetId("Check"));
+                            } catch (e) {
+                                logger.error("OAuth2 callback failed", e);
+                            }
+                        },
+                        dismissOAuthModal: () => popModal("oauth2-authorize"),
+                    },
+                    closable: true,
+                },
+            });
+        };
 
         const handleSave = async () => {
             if (!vstorage.token) {
@@ -138,7 +210,6 @@ export default defineCorePlugin({
                     title: "Import Data?",
                     content: `This will install ${Object.keys(data.plugins).length} plugins and ${Object.keys(data.themes).length} themes.`,
                     onConfirm: async () => {
-                        // Logic to install plugins and themes
                         for (const [id, pluginData] of Object.entries(data.plugins)) {
                             if (!VdPluginManager.plugins[id]) {
                                 try {
@@ -186,16 +257,25 @@ export default defineCorePlugin({
                                         if (vstorage.token) {
                                             vstorage.token = undefined;
                                         } else {
-                                            showInputAlert({
-                                                title: "Enter Token",
-                                                placeholder: "CloudSync Token",
-                                                onConfirm: (val) => {
-                                                    if (val) {
-                                                        vstorage.token = val;
-                                                        showToast("Token set", findAssetId("Check"));
-                                                    }
+                                            showConfirmationAlert({
+                                                title: "Authorize",
+                                                content: "Would you like to authorize via OAuth2 or manual token?",
+                                                confirmText: "OAuth2",
+                                                secondaryConfirmText: "Manual",
+                                                onConfirm: openOauth2Modal,
+                                                onConfirmSecondary: () => {
+                                                    showInputAlert({
+                                                        title: "Enter Token",
+                                                        placeholder: "CloudSync Token",
+                                                        onConfirm: (val) => {
+                                                            if (val) {
+                                                                vstorage.token = val;
+                                                                showToast("Token set", findAssetId("Check"));
+                                                            }
+                                                        }
+                                                    });
                                                 }
-                                            });
+                                            } as any);
                                         }
                                     }}
                                 />
@@ -221,11 +301,10 @@ export default defineCorePlugin({
                             />
                             <TableSwitchRow 
                                 label="Auto Sync"
-                                subLabel="Automatically sync changes (Coming soon)"
+                                subLabel="Automatically sync changes"
                                 icon={<TableRowIcon source={findAssetId("RefreshIcon")} />}
                                 value={vstorage.autoSync}
                                 onValueChange={(v: boolean) => vstorage.autoSync = v}
-                                disabled
                             />
                         </TableRowGroup>
                     )}
@@ -235,6 +314,15 @@ export default defineCorePlugin({
                             label="Server URL"
                             subLabel={vstorage.host || defaultHost}
                             icon={<TableRowIcon source={findAssetId("PencilIcon")} />}
+                            onPress={() => {
+                                showInputAlert({
+                                    title: "Server URL",
+                                    initialValue: vstorage.host || defaultHost,
+                                    onConfirm: (v) => {
+                                        if (v) vstorage.host = v.endsWith("/") ? v : v + "/";
+                                    }
+                                });
+                            }}
                         />
                     </TableRowGroup>
                 </Stack>

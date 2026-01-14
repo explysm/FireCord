@@ -13,7 +13,7 @@ export const getCorePlugins = (): Record<string, CorePlugin> => ({
   "bunny.messagefix": { default: require("./messagefix").default, preenabled: true },
   "bunny.fixembed": { default: require("./fixembed").default, preenabled: true },
   "bunny.enhancements": { default: require("./shiggyenhancements").default, preenabled: true },
-  "bunny.cloudsync": { default: require("./cloudsync").default, preenabled: true }
+  "firecord.cloudsync": { default: require("./cloudsync").default, preenabled: true }
 });
 
 /**
