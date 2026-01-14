@@ -30,6 +30,10 @@ import React from "react";
 export default function General() {
   useProxy(settings);
 
+  const { VdPluginManager } = require("@core/vendetta/plugins");
+  const { themes } = require("@lib/addons/themes");
+  const { fonts } = require("@lib/addons/fonts");
+
   const debugInfo = getDebugInfo();
   const navigation = NavigationNative.useNavigation();
 
@@ -38,10 +42,10 @@ export default function General() {
   useProxy(fonts);
 
   const stats = {
-    plugins: Object.keys(VdPluginManager.plugins).length,
-    enabledPlugins: Object.values(VdPluginManager.plugins).filter(p => p.enabled).length,
-    themes: Object.keys(themes).length,
-    fonts: Object.keys(fonts).length,
+    plugins: Object.keys(VdPluginManager.plugins || {}).length,
+    enabledPlugins: Object.values(VdPluginManager.plugins || {}).filter((p: any) => p.enabled).length,
+    themes: Object.keys(themes || {}).filter(k => !k.startsWith("__")).length,
+    fonts: Object.keys(fonts || {}).filter(k => !k.startsWith("__")).length,
   };
 
   // Custom Community Card Button
