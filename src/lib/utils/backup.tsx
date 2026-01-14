@@ -1,22 +1,53 @@
 import { NativeCacheModule, NativeFileModule } from "@lib/api/native/modules";
 import { showToast } from "@lib/ui/toasts";
 import { findAssetId } from "@lib/api/assets";
-import { clipboard } from "@metro/common";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { openAlert } from "@lib/ui/alerts";
 import { AlertModal, AlertActions, AlertActionButton } from "@metro/common/components";
+import { logger } from "@lib/utils/logger";
+import { Clipboard } from "react-native";
 import React from "react";
+
+const KNOWN_MMKV_KEYS = [
+    "VENDETTA_SETTINGS",
+    "VENDETTA_THEMES",
+    "VENDETTA_UPDATER_SETTINGS",
+    "BUNNY_FONTS",
+    "FANCY_FONTS",
+    "BUNNY_COLOR_PREFS"
+];
 
 export async function exportBackup() {
     try {
-        const backup: Record<string, any> = {};
+        const backup: Record<string, any> = {
+            mmkv: {},
+            files: {}
+        };
         
+        logger.log("Starting backup export...");
+
         // 1. Get MMKV data
-        const allMMKV = await NativeCacheModule.refresh([]);
-        backup.mmkv = allMMKV;
+        if (typeof NativeCacheModule.refresh === "function") {
+            try {
+                backup.mmkv = await NativeCacheModule.refresh([]);
+                logger.log(`Backed up ${Object.keys(backup.mmkv).length} MMKV keys via refresh`);
+            } catch (e) {
+                logger.error("NativeCacheModule.refresh failed, falling back to manual keys", e);
+            }
+        }
+
+        // Fallback or additional keys
+        for (const key of KNOWN_MMKV_KEYS) {
+            if (backup.mmkv[key]) continue;
+            try {
+                const val = await NativeCacheModule.getItem(key);
+                if (val) backup.mmkv[key] = val;
+            } catch (e) {
+                logger.error(`Failed to backup MMKV key: ${key}`, e);
+            }
+        }
 
         // 2. Get File-based data
-        const files: Record<string, string> = {};
         const docsPath = NativeFileModule.getConstants().DocumentsDirPath;
         
         const filesToBackup = [
@@ -31,25 +62,31 @@ export async function exportBackup() {
 
         for (const file of filesToBackup) {
             const path = `${docsPath}/${file}`;
-            if (await NativeFileModule.fileExists(path)) {
-                files[file] = await NativeFileModule.readFile(path, "utf8");
+            try {
+                if (await NativeFileModule.fileExists(path)) {
+                    backup.files[file] = await NativeFileModule.readFile(path, "utf8");
+                }
+            } catch (e) {
+                logger.error(`Failed to backup file: ${file}`, e);
             }
         }
-        backup.files = files;
 
         const json = JSON.stringify(backup);
-        clipboard.setString(json);
+        logger.log(`Backup JSON generated (${json.length} chars). Copying to clipboard...`);
+        
+        await clipboard.setString(json);
         
         showToast("Backup copied to clipboard!", findAssetId("Check"));
+        logger.log("Backup export successful");
     } catch (e) {
-        console.error("Failed to export backup", e);
+        logger.error("Failed to export backup", e);
         showToast("Failed to export backup", findAssetId("Small"));
     }
 }
 
 export async function importBackup() {
     try {
-        const json = await clipboard.getString();
+        const json = await Clipboard.getString();
         if (!json) {
             showToast("Clipboard is empty!", findAssetId("Small"));
             return;
