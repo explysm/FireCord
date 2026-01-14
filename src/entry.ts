@@ -6,14 +6,34 @@ const { instead } = require("spitroast");
 globalThis.window = globalThis;
 
 async function initializeFireCord() {
+  const { ClientInfoManager, NativeCacheModule } = require("@lib/api/native/modules");
+  const CRASH_COUNT_KEY = "firecord_crash_count";
+  
   try {
+    const rawCount = await NativeCacheModule.getItem(CRASH_COUNT_KEY);
+    const crashCount = parseInt(rawCount || "0", 10);
+
+    if (crashCount >= 3) {
+      alert(
+        "FireCord has crashed " + crashCount + " times during startup. " +
+        "It will now be disabled to allow Discord to start. " +
+        "To re-enable, please clear FireCord's data or cache."
+      );
+      return; // Abort FireCord initialization
+    }
+
+    // Increment crash count before starting
+    await NativeCacheModule.setItem(CRASH_COUNT_KEY, (crashCount + 1).toString());
+
     // Make 'freeze' and 'seal' do nothing
     Object.freeze = Object.seal = Object;
 
     await require("@metro/internals/caches").initMetroCache();
     await require(".").default();
+
+    // Reset crash count on success
+    await NativeCacheModule.setItem(CRASH_COUNT_KEY, "0");
   } catch (e) {
-    const { ClientInfoManager } = require("@lib/api/native/modules");
     const stack = e instanceof Error ? e.stack : undefined;
 
     console.log(stack ?? e?.toString?.() ?? e);
