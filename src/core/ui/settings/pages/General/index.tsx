@@ -2,12 +2,16 @@ import { isSafeMode, toggleSafeMode } from "@core/debug/safeMode";
 import { Strings } from "@core/i18n";
 import { firecordIcon } from "@core/ui/settings";
 import About from "@core/ui/settings/pages/General/About";
+import { VdPluginManager } from "@core/vendetta/plugins";
+import { themes } from "@lib/addons/themes";
+import { fonts } from "@lib/addons/fonts";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { getDebugInfo } from "@lib/api/debug";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { openAlert } from "@lib/ui/alerts";
+import { exportBackup, importBackup, clearCache } from "@lib/utils/backup";
 import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
 import { NavigationNative } from "@metro/common";
 import {
@@ -30,6 +34,17 @@ export default function General() {
 
   const debugInfo = getDebugInfo();
   const navigation = NavigationNative.useNavigation();
+
+  useProxy(VdPluginManager.plugins);
+  useProxy(themes);
+  useProxy(fonts);
+
+  const stats = {
+    plugins: Object.keys(VdPluginManager.plugins).length,
+    enabledPlugins: Object.values(VdPluginManager.plugins).filter(p => p.enabled).length,
+    themes: Object.keys(themes).length,
+    fonts: Object.keys(fonts).length,
+  };
 
   // Custom Community Card Button
   const CommunityCardButton = ({
@@ -123,6 +138,23 @@ export default function General() {
         style={{ paddingVertical: 24, paddingHorizontal: 12 }}
         spacing={24}
       >
+        <TableRowGroup title="Overview">
+          <View style={{ flexDirection: "row", gap: 8, paddingHorizontal: 4 }}>
+             <Card style={{ flex: 1, padding: 12, alignItems: "center", backgroundColor: "rgba(114, 137, 218, 0.1)" }}>
+                <Text variant="heading-lg/bold" color="text-brand">{stats.enabledPlugins}/{stats.plugins}</Text>
+                <Text variant="text-xs/semibold" color="text-muted">Plugins</Text>
+             </Card>
+             <Card style={{ flex: 1, padding: 12, alignItems: "center", backgroundColor: "rgba(235, 69, 158, 0.1)" }}>
+                <Text variant="heading-lg/bold" style={{ color: "#EB459E" }}>{stats.themes}</Text>
+                <Text variant="text-xs/semibold" color="text-muted">Themes</Text>
+             </Card>
+             <Card style={{ flex: 1, padding: 12, alignItems: "center", backgroundColor: "rgba(88, 101, 242, 0.1)" }}>
+                <Text variant="heading-lg/bold" style={{ color: "#5865F2" }}>{stats.fonts}</Text>
+                <Text variant="text-xs/semibold" color="text-muted">Fonts</Text>
+             </Card>
+          </View>
+        </TableRowGroup>
+
         <TableRowGroup title="App Information">
           <TableRow
             label={Strings.SHIGGYCORD}
@@ -205,6 +237,27 @@ export default function General() {
             onValueChange={(v: boolean) => {
               settings.enableDiscordDeveloperSettings = v;
             }}
+          />
+        </TableRowGroup>
+
+        <TableRowGroup title="Storage & Backup">
+          <TableRow
+            label="Export Backup"
+            subLabel="Copy all settings to clipboard"
+            icon={<TableRow.Icon source={findAssetId("UploadIcon")} />}
+            onPress={exportBackup}
+          />
+          <TableRow
+            label="Import Backup"
+            subLabel="Restore settings from clipboard"
+            icon={<TableRow.Icon source={findAssetId("DownloadIcon")} />}
+            onPress={importBackup}
+          />
+          <TableRow
+            label="Clear Cache"
+            subLabel="Remove temporary files and scripts"
+            icon={<TableRow.Icon source={findAssetId("TrashIcon")} />}
+            onPress={clearCache}
           />
         </TableRowGroup>
 
