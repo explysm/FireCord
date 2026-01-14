@@ -131,14 +131,15 @@ export default function CloudSyncSettings() {
                             }
                         }
                     }
-                    for (const [name, fontData] of Object.entries(data.fonts.installed)) {
-                        if (!fonts[name]) {
+                    for (const [source, fontData] of Object.entries(data.fonts.installed)) {
+                        // Check if already installed by source
+                        const isInstalled = Object.values(fonts).some((f: any) => f?.source === source);
+                        if (!isInstalled) {
                             try {
-                                const { saveFont, selectFont } = require("@lib/addons/fonts");
-                                await saveFont(fontData.data, fontData.enabled);
-                                if (fontData.enabled) await selectFont(name);
+                                const { installFont } = require("@lib/addons/fonts");
+                                await installFont(source, fontData.enabled);
                             } catch (e) {
-                                logger.error(`Failed to import font ${name}`, e);
+                                logger.error(`Failed to import font ${source}`, e);
                             }
                         }
                     }

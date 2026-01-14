@@ -60,9 +60,8 @@ export async function grabEverything(): Promise<UserData> {
             if (name.startsWith("__")) continue;
             const fontDef = data as FontDefinition;
             if (fontDef.source) {
-                sync.fonts.installed[name] = {
+                sync.fonts.installed[fontDef.source] = {
                     enabled: __selected === name,
-                    data: fontDef,
                 };
             } else {
                 sync.fonts.custom.push({
