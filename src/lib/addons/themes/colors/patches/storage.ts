@@ -1,4 +1,5 @@
 import { _colorRef } from "@lib/addons/themes/colors/updater";
+import { NativeClientInfoModule } from "@lib/api/native/modules";
 import { after, before } from "@lib/api/patcher";
 import { findInTree } from "@lib/utils";
 import { proxyLazy } from "@lib/utils/lazy";
@@ -22,6 +23,7 @@ export default function patchStorage() {
         }),
         before("set", mmkvStorage, ([key, value]) => {
             if (!patchedKeys.has(key)) return;
+            if (parseInt(NativeClientInfoModule.getConstants().Build, 10) > 306013) return;
 
             const json = JSON.stringify(value);
             const lastSetDiscordTheme = _colorRef.lastSetDiscordTheme ?? "darker";
