@@ -1,5 +1,6 @@
 import { defineCorePlugin } from "..";
-import { React, NavigationNative, findByProps, findByName } from "@metro/common";
+import { findByProps, findByName } from "@metro";
+import { React, NavigationNative } from "@metro/common";
 import { ScrollView, View, ActivityIndicator } from "react-native";
 import { 
     TableRowGroup, 
