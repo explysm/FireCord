@@ -11,7 +11,6 @@ import { getDebugInfo } from "@lib/api/debug";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { openAlert } from "@lib/ui/alerts";
-import { exportBackup, importBackup, clearCache } from "@lib/utils/backup";
 import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
 import { NavigationNative } from "@metro/common";
 import {
@@ -237,27 +236,6 @@ export default function General() {
             onValueChange={(v: boolean) => {
               settings.enableDiscordDeveloperSettings = v;
             }}
-          />
-        </TableRowGroup>
-
-        <TableRowGroup title="Storage & Backup">
-          <TableRow
-            label="Export Backup"
-            subLabel="Copy all settings to clipboard"
-            icon={<TableRow.Icon source={findAssetId("UploadIcon")} />}
-            onPress={exportBackup}
-          />
-          <TableRow
-            label="Import Backup"
-            subLabel="Restore settings from clipboard"
-            icon={<TableRow.Icon source={findAssetId("DownloadIcon")} />}
-            onPress={importBackup}
-          />
-          <TableRow
-            label="Clear Cache"
-            subLabel="Remove temporary files and scripts"
-            icon={<TableRow.Icon source={findAssetId("TrashIcon")} />}
-            onPress={clearCache}
           />
         </TableRowGroup>
 
