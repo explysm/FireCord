@@ -42,6 +42,12 @@ export default function initSettings() {
         usePredicate: () => isFontSupported(),
       },
       {
+        key: "FIRE_CLOUD_SYNC",
+        title: () => "Cloud Sync",
+        icon: findAssetId("LaptopPhoneIcon"),
+        render: () => import("@core/ui/settings/pages/CloudSync"),
+      },
+      {
         key: "BUNNY_DEVELOPER",
         title: () => Strings.DEVELOPER,
         icon: findAssetId("WrenchIcon"),
