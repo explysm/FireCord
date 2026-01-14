@@ -3,7 +3,7 @@ import { showToast } from "@lib/ui/toasts";
 import { findAssetId } from "@lib/api/assets";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { openAlert } from "@lib/ui/alerts";
-import { AlertModal, AlertActions, AlertActionButton } from "@metro/common/components";
+import { AlertModal, AlertActions, AlertActionButton, TextInput } from "@metro/common/components";
 import { logger } from "@lib/utils/logger";
 import { Clipboard } from "react-native";
 import React from "react";
@@ -17,7 +17,31 @@ const KNOWN_MMKV_KEYS = [
     "BUNNY_COLOR_PREFS"
 ];
 
+function showManualCopyModal(json: string) {
+    openAlert(
+        "firecord-manual-copy",
+        <AlertModal
+            title="Manual Copy"
+            content="Automated copy failed or restricted. Please copy the backup data below manually:"
+            extraContent={
+                <TextInput
+                    multiline
+                    editable={false}
+                    value={json}
+                    style={{ maxHeight: 200, fontFamily: "monospace", fontSize: 10 }}
+                />
+            }
+            actions={
+                <AlertActions>
+                    <AlertActionButton text="Done" variant="secondary" />
+                </AlertActions>
+            }
+        />
+    );
+}
+
 export async function exportBackup() {
+    let generatedJson = "";
     try {
         const backup: Record<string, any> = {
             mmkv: {},
@@ -71,16 +95,24 @@ export async function exportBackup() {
             }
         }
 
-        const json = JSON.stringify(backup);
-        logger.log(`Backup JSON generated (${json.length} chars). Copying to clipboard...`);
+        generatedJson = JSON.stringify(backup);
+        logger.log(`Backup JSON generated (${generatedJson.length} chars). Copying to clipboard...`);
         
-        await clipboard.setString(json);
-        
-        showToast("Backup copied to clipboard!", findAssetId("Check"));
-        logger.log("Backup export successful");
+        try {
+            await Clipboard.setString(generatedJson);
+            showToast("Backup copied to clipboard!", findAssetId("Check"));
+            logger.log("Backup export successful");
+        } catch (clipErr) {
+            logger.error("Clipboard.setString failed, showing manual copy modal", clipErr);
+            showManualCopyModal(generatedJson);
+        }
     } catch (e) {
         logger.error("Failed to export backup", e);
-        showToast("Failed to export backup", findAssetId("Small"));
+        if (generatedJson) {
+            showManualCopyModal(generatedJson);
+        } else {
+            showToast("Failed to generate backup", findAssetId("Small"));
+        }
     }
 }
 
