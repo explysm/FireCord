@@ -20,6 +20,12 @@ import { getDebugInfo, initDebugger } from "@lib/api/debug";
 
 import * as lib from "./lib";
 import { timings } from "@lib/utils/timings";
+import { lazyRegistry } from "@lib/utils/lazyRegistry";
+
+// Register core modules for lazy loading
+lazyRegistry.register("VdPluginManager", () => require("@core/vendetta/plugins").VdPluginManager);
+lazyRegistry.register("themes", () => require("@lib/addons/themes").themes);
+lazyRegistry.register("fonts", () => require("@lib/addons/fonts").fonts);
 
 /**
  * Start sequence split into critical (UI) and deferred (network/plugin) work.

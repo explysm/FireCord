@@ -10,6 +10,7 @@ import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { openAlert } from "@lib/ui/alerts";
 import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
+import { lazyRegistry } from "@lib/utils/lazyRegistry";
 import { NavigationNative } from "@metro/common";
 import {
   AlertActionButton,
@@ -30,9 +31,9 @@ import React from "react";
 export default function General() {
   useProxy(settings);
 
-  const { VdPluginManager } = require("@core/vendetta/plugins");
-  const { themes } = require("@lib/addons/themes");
-  const { fonts } = require("@lib/addons/fonts");
+  const VdPluginManager = lazyRegistry.get<any>("VdPluginManager");
+  const themes = lazyRegistry.get<any>("themes");
+  const fonts = lazyRegistry.get<any>("fonts");
 
   const debugInfo = getDebugInfo();
   const navigation = NavigationNative.useNavigation();
