@@ -7,13 +7,13 @@ interface CorePlugin {
 
 // Called from @lib/plugins
 export const getCorePlugins = (): Record<string, CorePlugin> => ({
-  "bunny.quickinstall": { ...require("./quickinstall"), preenabled: true },
-  "bunny.badges": require("./badges"),
-  "bunny.notrack": require("./notrack"),
-  "bunny.messagefix": require("./messagefix"),
-  "bunny.fixembed": require("./fixembed"),
-  "bunny.enhancements": require("./shiggyenhancements"),
-  "bunny.cloudsync": require("./cloudsync")
+  "bunny.quickinstall": { default: require("./quickinstall").default, preenabled: true },
+  "bunny.badges": { default: require("./badges").default, preenabled: true },
+  "bunny.notrack": { default: require("./notrack").default, preenabled: true },
+  "bunny.messagefix": { default: require("./messagefix").default, preenabled: true },
+  "bunny.fixembed": { default: require("./fixembed").default, preenabled: true },
+  "bunny.enhancements": { default: require("./shiggyenhancements").default, preenabled: true },
+  "bunny.cloudsync": { default: require("./cloudsync").default, preenabled: true }
 });
 
 /**

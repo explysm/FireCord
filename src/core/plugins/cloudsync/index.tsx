@@ -15,7 +15,7 @@ import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
 import { useProxy, createStorage, createMMKVBackend } from "@core/vendetta/storage";
 import { showToast } from "@lib/ui/toasts";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
+import { showConfirmationAlert, showInputAlert } from "@core/vendetta/alerts";
 import { VdPluginManager } from "@core/vendetta/plugins";
 import { themes, selectTheme } from "@lib/addons/themes";
 import { fonts, saveFont, installFont as installFontAddon } from "@lib/addons/fonts";
@@ -79,6 +79,14 @@ export default defineCorePlugin({
             description: "Syncs your plugins, themes and fonts to the cloud",
             authors: [{ name: "nexpid" }, { name: "FireCord Team" }],
         },
+    },
+
+    start() {
+        logger.log("CloudSync started");
+    },
+
+    stop() {
+        logger.log("CloudSync stopped");
     },
 
     SettingsComponent() {
@@ -178,9 +186,16 @@ export default defineCorePlugin({
                                         if (vstorage.token) {
                                             vstorage.token = undefined;
                                         } else {
-                                            // TODO: OAuth2 flow
-                                            // For now, allow manual token entry for testing if needed or prompt for oauth
-                                            showToast("OAuth2 flow not yet implemented", findAssetId("Small"));
+                                            showInputAlert({
+                                                title: "Enter Token",
+                                                placeholder: "CloudSync Token",
+                                                onConfirm: (val) => {
+                                                    if (val) {
+                                                        vstorage.token = val;
+                                                        showToast("Token set", findAssetId("Check"));
+                                                    }
+                                                }
+                                            });
                                         }
                                     }}
                                 />
