@@ -698,11 +698,15 @@ export default function Plugins() {
             .reverse()
             .map((id) => unifyVdPlugin(VdPluginManager.plugins[id]));
 
+          // Core plugins: always display them
+          const corePlugins = Array.from(corePluginInstances.values())
+            .map((instance) => unifyBunnyPlugin(instance.manifest));
+
           // Bunny external plugins which are installed (non-core).
           // Use the insertion order of pluginSettings so newly-installed plugins
           // (which add entries to pluginSettings) appear first.
           const installedBnIds = Object.keys(pluginSettings || {})
-            .filter((id) => registeredPlugins.has(id))
+            .filter((id) => registeredPlugins.has(id) && !corePluginInstances.has(id))
             .slice()
             .reverse();
 
@@ -710,11 +714,10 @@ export default function Plugins() {
             .map((id) => registeredPlugins.get(id)!)
             .map(unifyBunnyPlugin);
 
-          // Merge lists: show Vendetta-managed plugins first,
+          // Merge lists: show Core plugins first, then Vendetta-managed plugins,
           // then Bunny-installed externals (recent first).
-          const allPlugins = [...vdPlugins, ...bnPlugins];
+          const allPlugins = [...corePlugins, ...vdPlugins, ...bnPlugins];
 
-          // Include core plugins in the list
           return allPlugins;
         }}
         ListHeaderComponent={() => null}

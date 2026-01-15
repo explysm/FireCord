@@ -1,6 +1,6 @@
 import { defineCorePlugin } from "..";
 import { findByProps } from "@metro";
-import { before } from "@lib/api/patcher";
+import { after } from "@lib/api/patcher";
 import { logger } from "@lib/utils/logger";
 import { settings } from "@lib/api/settings";
 import { React } from "@metro/common";
@@ -64,7 +64,7 @@ function transformLinks(content: string, config: FixEmbedSettings): string {
 export default defineCorePlugin({
   manifest: {
     id: "bunny.fixembed",
-    version: "1.0.1",
+    version: "1.0.0",
     type: "plugin",
     spec: 3,
     main: "",
@@ -167,10 +167,11 @@ export default defineCorePlugin({
     };
 
     if (!unpatch) {
-      unpatch = before("sendMessage", MessageActions, (args) => {
+      unpatch = after("sendMessage", MessageActions, (args) => {
         const config = settings.fixembed!;
         if (args[1]?.content) {
           args[1].content = transformLinks(args[1].content, config);
+          args[1].nonce = args[1].nonce || Math.random().toString(36).slice(2);
         }
       });
     }
