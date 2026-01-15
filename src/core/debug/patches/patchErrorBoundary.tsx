@@ -4,6 +4,7 @@ import { after } from "@lib/api/patcher";
 import { _lazyContextSymbol } from "@metro/lazy";
 import { LazyModuleContext } from "@metro/types";
 import { findByNameLazy } from "@metro/wrappers";
+import { logger } from "@lib/utils/logger";
 
 /**
  * Try to resolve the ErrorBoundary prototype context in a resilient way.
@@ -51,16 +52,12 @@ const ErrorBoundaryMount: React.FC<{
  * uncaught errors for debugging.
  */
 export default function patchErrorBoundary() {
-  try {
-    console.log("[FireCord] patchErrorBoundary: registering");
-  } catch {}
-
   // Attempt to attach after the ErrorBoundary render. If the context lookup
   // fails, the promise will reject and the patcher will not install the patch,
   // which is preferable to throwing during startup.
   const ctxPromise = getErrorBoundaryContext().catch((err) => {
     try {
-      console.warn(
+      logger.warn(
         "[FireCord] patchErrorBoundary: context lookup failed",
         err,
       );
@@ -73,13 +70,6 @@ export default function patchErrorBoundary() {
     try {
       // Defensive checks: only render our screen when an error is actually present.
       if (!this || !this.state || !this.state.error) return;
-
-      try {
-        console.log(
-          "[FireCord] patchErrorBoundary: rendering custom error screen",
-          this.state.error,
-        );
-      } catch {}
 
       // Return a stable component element (ErrorBoundaryMount). Using a named,
       // module-scoped component helps React ensure hook ordering for nested components.
@@ -100,7 +90,7 @@ export default function patchErrorBoundary() {
       });
     } catch (e) {
       try {
-        console.error(
+        logger.error(
           "[FireCord] patchErrorBoundary: error while rendering custom screen",
           e,
         );
@@ -127,7 +117,7 @@ export default function patchErrorBoundary() {
             null;
           ErrorUtils.setGlobalHandler((err: any, isFatal?: boolean) => {
             try {
-              console.error("[FireCord] global uncaught error:", err, {
+              logger.error("[FireCord] global uncaught error:", err, {
                 isFatal,
               });
               (window as any).__FIRE_LAST_UNCAUGHT_ERROR = err;
@@ -144,7 +134,7 @@ export default function patchErrorBoundary() {
         if (typeof g.addEventListener === "function") {
           g.addEventListener("unhandledrejection", (ev: any) => {
             try {
-              console.error(
+              logger.error(
                 "[FireCord] unhandledrejection:",
                 ev?.reason ?? ev,
               );

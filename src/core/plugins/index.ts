@@ -8,7 +8,7 @@ interface CorePlugin {
 
 // Register core plugins in the registry for deferred loading
 [
-  "quickinstall", "badges", "notrack", "messagefix", "fixembed", "shiggyenhancements", "cloudsync"
+  "quickinstall", "badges", "notrack", "messagefix", "fixembed", "fireenhancements", "cloudsync"
 ].forEach(id => {
   lazyRegistry.register(`core.plugin.${id}`, () => require(`./${id}`).default);
 });
@@ -20,7 +20,7 @@ export const getCorePlugins = (): Record<string, CorePlugin> => ({
   "bunny.notrack": { default: lazyRegistry.get("core.plugin.notrack"), preenabled: true },
   "bunny.messagefix": { default: lazyRegistry.get("core.plugin.messagefix"), preenabled: true },
   "bunny.fixembed": { default: lazyRegistry.get("core.plugin.fixembed"), preenabled: true },
-  "bunny.enhancements": { default: lazyRegistry.get("core.plugin.shiggyenhancements"), preenabled: true },
+  "bunny.enhancements": { default: lazyRegistry.get("core.plugin.fireenhancements"), preenabled: true },
   "firecord.cloudsync": { default: lazyRegistry.get("core.plugin.cloudsync"), preenabled: true }
 });
 

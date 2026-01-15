@@ -1,15 +1,16 @@
 import { defineCorePlugin } from "..";
 import { findByProps } from "@metro";
+import { before } from "@lib/api/patcher";
 import { logger } from "@lib/utils/logger";
 
 // Find the MessageActions module
 const MessageActions = findByProps("sendMessage");
-let originalSendMessage: Function;
+let unpatch: (() => void) | null = null;
 
 export default defineCorePlugin({
   manifest: {
     id: "bunny.messagefix",
-    version: "1.0.0",
+    version: "1.0.1",
     type: "plugin",
     spec: 3,
     main: "",
@@ -21,36 +22,18 @@ export default defineCorePlugin({
   },
 
   start() {
-    // Save original function
-    originalSendMessage = MessageActions.sendMessage;
-
-    // Replace with our implementation
-    MessageActions.sendMessage = function (
-      channelId,
-      message,
-      replyRef,
-      options,
-    ) {
-      // Ensure options exists and has a nonce
-      options = options || {};
+    unpatch = before("sendMessage", MessageActions, (args) => {
+      const options = args[3] || {};
       options.nonce = options.nonce || (BigInt(Date.now() - 1420070400000) << 22n).toString();
-
-      // Call original with fixed parameters
-      return originalSendMessage.call(
-        this,
-        channelId,
-        message,
-        replyRef,
-        options,
-      );
-    };
+      args[3] = options;
+    });
 
     logger.log("MessageFix: Enabled - adding nonce to all messages");
   },
 
   stop() {
-    // Restore original function
-    if (originalSendMessage) MessageActions.sendMessage = originalSendMessage;
+    if (unpatch) unpatch();
+    unpatch = null;
     logger.log("MessageFix: Disabled");
   },
 });

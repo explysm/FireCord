@@ -4,17 +4,10 @@ import { logger } from "@lib/utils/logger";
 import { settings } from "@lib/api/settings";
 import { React } from "@metro/common";
 
-const { TableRowGroup, TableRow, TableSwitchRow, Stack } = findByProps(
-  "TableRowGroup",
-  "TableRow",
-  "TableSwitchRow",
-  "Stack",
-);
-const { ScrollView } = require("react-native");
-
-// Get ReactNative for NativeModules
 const { ReactNative } = window as any;
 const { DCDSoundManager } = ReactNative?.NativeModules || {};
+
+const { ScrollView } = require("react-native");
 
 // Sound settings type
 type SoundSettings = {
@@ -101,16 +94,16 @@ function shouldPlaySound(): boolean {
 
 export default defineCorePlugin({
   manifest: {
-    id: "bunny.enhancements",
-    version: "0.1.0",
+    id: "firecord.enhancements",
+    version: "1.0.0",
     type: "plugin",
     spec: 3,
     main: "",
     display: {
-      name: "Shiggy Enhancements",
+      name: "Fire Enhancements",
       description:
-        "Fixes common discord bugs because discord wont, and adds some features. (Originally Kettu Enhancements)",
-      authors: [{ name: "cocobo1" }, { name: "Shiggy Team" }],
+        "Fixes common discord bugs because discord wont, and adds some features.",
+      authors: [{ name: "FireTeam" }],
     },
   },
 
@@ -132,37 +125,26 @@ export default defineCorePlugin({
       setConfig((prev) => ({ ...prev, [key]: value }));
     };
 
-    // Get UI components including TextInput
+    // Get UI components - split into separate lookups as they may be in different modules
     const {
-      TableRowGroup: _TRG,
-      TableRow: _TR,
-      TableSwitchRow: _TSR,
-      Stack: _S,
-      TextInput: _TextInput,
-    } = findByProps(
-      "TableRowGroup",
-      "TableRow",
-      "TableSwitchRow",
-      "Stack",
-      "TextInput",
-    );
+      TableRowGroup,
+      TableRow,
+      TableSwitchRow,
+      Stack,
+    } = findByProps("TableRowGroup", "TableRow", "TableSwitchRow", "Stack") || {};
+    
+    const { TextInput } = findByProps("TextInput") || {};
 
     // Fallback if table components aren't available
-    if (!_TRG || !_TSR || !_TR || !_S) {
+    if (!TableRowGroup || !TableSwitchRow || !TableRow || !Stack) {
       const FallbackText =
-        "Startup Sound UI unavailable (missing TableRow components).";
+        "Fire Enhancements UI unavailable (missing TableRow components).";
       return React.createElement(
         ScrollView,
         { style: { flex: 1, padding: 12 } },
         FallbackText,
       );
     }
-
-    const TableRowGroup = _TRG;
-    const TableRow = _TR;
-    const TableSwitchRow = _TSR;
-    const Stack = _S;
-    const TextInput = _TextInput;
 
     // Handle probability input change
     const handleProbabilityChange = (v: string) => {
@@ -218,7 +200,7 @@ export default defineCorePlugin({
         React.createElement(TableRow, {
           label: "Description",
           subLabel:
-            "Shiggy Enhancements, more options, more features. Originally Kettu Enhancements with additinal features.",
+            "Fire Enhancements, more options, more features.",
           disabled: true,
         }),
       ),
@@ -236,7 +218,7 @@ export default defineCorePlugin({
   },
 
   start() {
-    logger.log("Shiggy Enhancements: Starting plugin");
+    logger.log("Fire Enhancements: Starting plugin");
 
     // Initialize sound settings
     settings.startupSound = settings.startupSound || {
@@ -274,15 +256,11 @@ export default defineCorePlugin({
         .catch((error) => {
           logger.error("Error in sound preparation:", error);
         });
-    } else if (settings.startupSound.enabled) {
-      logger.log(
-        `Startup sound skipped due to probability (${settings.startupSound?.probability}% chance)`,
-      );
     }
   },
 
   stop() {
-    logger.log("Shiggy Enhancements: Stopping plugin");
+    logger.log("Fire Enhancements: Stopping plugin");
 
     // Stop and cleanup audio
     if (DCDSoundManager && isPlaying) {

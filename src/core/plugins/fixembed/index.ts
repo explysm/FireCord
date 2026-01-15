@@ -1,16 +1,10 @@
 import { defineCorePlugin } from "..";
 import { findByProps } from "@metro";
-import { after } from "@lib/api/patcher";
+import { before } from "@lib/api/patcher";
 import { logger } from "@lib/utils/logger";
 import { settings } from "@lib/api/settings";
 import { React } from "@metro/common";
 
-const { TableRowGroup, TableRow, TableSwitchRow, Stack } = findByProps(
-  "TableRowGroup",
-  "TableRow",
-  "TableSwitchRow",
-  "Stack",
-);
 const { ScrollView, Text } = require("react-native");
 
 type FixEmbedSettings = {
@@ -70,7 +64,7 @@ function transformLinks(content: string, config: FixEmbedSettings): string {
 export default defineCorePlugin({
   manifest: {
     id: "bunny.fixembed",
-    version: "1.0.0",
+    version: "1.0.1",
     type: "plugin",
     spec: 3,
     main: "",
@@ -101,14 +95,14 @@ export default defineCorePlugin({
 
     // Prefer table-style rows (TableRowGroup / TableSwitchRow) and Stack layout similar to other core plugins.
     const {
-      TableRowGroup: _TRG,
-      TableRow: _TR,
-      TableSwitchRow: _TSR,
-      Stack: _S,
-    } = findByProps("TableRowGroup", "TableRow", "TableSwitchRow", "Stack");
+      TableRowGroup,
+      TableRow,
+      TableSwitchRow,
+      Stack,
+    } = findByProps("TableRowGroup", "TableRow", "TableSwitchRow", "Stack") || {};
 
     // Fallback if the table-style components are not available in the host environment
-    if (!_TRG || !_TSR || !_TR || !_S) {
+    if (!TableRowGroup || !TableSwitchRow || !TableRow || !Stack) {
       return React.createElement(
         ScrollView,
         { style: { flex: 1, padding: 12 } },
@@ -119,12 +113,6 @@ export default defineCorePlugin({
         ),
       );
     }
-
-    // Use the resolved components
-    const TableRowGroup = _TRG;
-    const TableRow = _TR;
-    const TableSwitchRow = _TSR;
-    const Stack = _S;
 
     return React.createElement(ScrollView, { style: { flex: 1 } }, [
       React.createElement(
@@ -179,11 +167,10 @@ export default defineCorePlugin({
     };
 
     if (!unpatch) {
-      unpatch = after("sendMessage", MessageActions, (args) => {
+      unpatch = before("sendMessage", MessageActions, (args) => {
         const config = settings.fixembed!;
         if (args[1]?.content) {
           args[1].content = transformLinks(args[1].content, config);
-          args[1].nonce = args[1].nonce || Math.random().toString(36).slice(2);
         }
       });
     }
