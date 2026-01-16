@@ -17,7 +17,6 @@ import { settings } from "@lib/api/settings";
 import { useObservable } from "@lib/api/storage";
 import { lazyDestructure } from "@lib/utils/lazy";
 import safeFetch from "@lib/utils/safeFetch";
-import Search from "@ui/components/Search";
 import { findByProps } from "@metro";
 import { NavigationNative, React, clipboard } from "@metro/common";
 import { showSheet } from "@lib/ui/sheets";
@@ -26,16 +25,14 @@ import {
   BottomSheetTitleHeader,
   Button,
   Card,
-  FlashList,
   IconButton,
   Stack,
   TableRowGroup,
   TableSwitchRow,
   TableRowIcon,
+  TableRow,
+  TableCheckboxRow,
   Text,
-  AlertModal,
-  AlertActions,
-  AlertActionButton,
 } from "@metro/common/components";
 import { View, Image } from "react-native";
 
@@ -56,13 +53,6 @@ interface BaseAddonData {
 }
 
 interface ThemeData extends BaseAddonData {}
-
-enum Sort {
-  DateNewest = "Date Added (Newest First)",
-  DateOldest = "Date Added (Oldest First)",
-  NameAZ = "Name (A-Z)",
-  NameZA = "Name (Z-A)",
-}
 
 const THEME_URL =
   "https://raw.githubusercontent.com/kmmiio99o/theme-marketplace/refs/heads/main/themes.json";
@@ -357,11 +347,6 @@ function BrowseThemePage(props: BrowseThemePageProps) {
   );
 }
 
-/**
- * Theme options have been changed from radio groups to individual switches
- * for better UX. Each option can now be toggled independently.
- */
-
 export default function Themes() {
   useProxy(settings);
   useProxy(themes);
@@ -375,116 +360,21 @@ export default function Themes() {
   const [refreshTick, setRefreshTick] = React.useState(0);
 
   React.useEffect(() => {
-    const headerButtons: React.ReactNode[] = [];
-
-    // Add mode toggle button
-    headerButtons.push(
-      <Button
-        key="mode-toggle"
-        size="sm"
-        variant="secondary"
-        text={mode === "installed" ? "Browse" : "Installed"}
-        icon={findAssetId(mode === "installed" ? "LinkIcon" : "DownloadIcon")}
-        style={{
-          shadowColor: "#000",
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 2,
-        }}
-        onPress={() => setMode(mode === "installed" ? "browse" : "installed")}
-      />,
-    );
-
-    // Add options button (always visible)
-    headerButtons.push(
-      <IconButton
-        key="options"
-        size="sm"
-        variant="secondary"
-        icon={findAssetId("MoreHorizontalIcon")}
-        onPress={() =>
-          showSheet("ThemeOptionsSheet", () => {
-            useObservable([colorsPref]);
-
-            return (
-              <ActionSheet>
-                <BottomSheetTitleHeader title="Options" />
-                <View style={{ paddingVertical: 20, gap: 12 }}>
-                  <TableRowGroup title="Override Theme Type">
-                    <TableSwitchRow
-                      label="Auto"
-                      icon={<TableRowIcon source={findAssetId("RobotIcon")} />}
-                      value={!colorsPref.type}
-                      onValueChange={(enabled: boolean) => {
-                        if (enabled) {
-                          colorsPref.type = undefined;
-                        } else {
-                          colorsPref.type = "dark";
-                        }
-                        getCurrentTheme()?.data &&
-                          updateBunnyColor(getCurrentTheme()!.data!, {
-                            update: true,
-                          });
-                      }}
-                    />
-                    <TableSwitchRow
-                      label="Dark"
-                      icon={
-                        <TableRowIcon source={findAssetId("ThemeDarkIcon")} />
-                      }
-                      value={colorsPref.type === "dark"}
-                      onValueChange={(enabled: boolean) => {
-                        colorsPref.type = enabled ? "dark" : undefined;
-                        getCurrentTheme()?.data &&
-                          updateBunnyColor(getCurrentTheme()!.data!, {
-                            update: true,
-                          });
-                      }}
-                    />
-                    <TableSwitchRow
-                      label="Light"
-                      icon={
-                        <TableRowIcon source={findAssetId("ThemeLightIcon")} />
-                      }
-                      value={colorsPref.type === "light"}
-                      onValueChange={(enabled: boolean) => {
-                        colorsPref.type = enabled ? "light" : undefined;
-                        getCurrentTheme()?.data &&
-                          updateBunnyColor(getCurrentTheme()!.data!, {
-                            update: true,
-                          });
-                      }}
-                    />
-                  </TableRowGroup>
-                  <TableRowGroup title="Chat Background">
-                    <TableSwitchRow
-                      label="Show Background"
-                      icon={<TableRowIcon source={findAssetId("ImageIcon")} />}
-                      value={!colorsPref.customBackground}
-                      onValueChange={(enabled: boolean) => {
-                        colorsPref.customBackground = enabled ? null : "hidden";
-                      }}
-                    />
-                    <TableSwitchRow
-                      label="Hide Background"
-                      icon={<TableRowIcon source={findAssetId("DenyIcon")} />}
-                      value={colorsPref.customBackground === "hidden"}
-                      onValueChange={(enabled: boolean) => {
-                        colorsPref.customBackground = enabled ? "hidden" : null;
-                      }}
-                    />
-                  </TableRowGroup>
-                </View>
-              </ActionSheet>
-            );
-          })
-        }
-      />,
-    );
-
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: "row", gap: 8 }}>{headerButtons}</View>
+        <Button
+          size="sm"
+          variant="secondary"
+          text={mode === "installed" ? "Browse" : "Installed"}
+          icon={findAssetId(mode === "installed" ? "LinkIcon" : "DownloadIcon")}
+          style={{
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 2,
+          }}
+          onPress={() => setMode(mode === "installed" ? "browse" : "installed")}
+        />
       ),
     });
   }, [navigation, mode]);
@@ -562,39 +452,38 @@ export default function Themes() {
                           height: 32,
                           tintColor: "#43b581",
                         }}
-                      />
+                      </View>
+                      <Text variant="heading-md/bold">
+                        Theme installed successfully!
+                      </Text>
+                      <Text
+                        variant="text-md/medium"
+                        color="text-muted"
+                        style={{ textAlign: "center" }}
+                      >
+                        The theme has been added to your themes list.
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 8,
+                          width: "100%",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Button
+                          size="md"
+                          text="Cancel"
+                          variant="secondary"
+                          style={{ flex: 1 }}
+                          onPress={() => hideActionSheet()}
+                        />
+                      </View>
                     </View>
-                    <Text variant="heading-md/bold">
-                      Theme installed successfully!
-                    </Text>
-                    <Text
-                      variant="text-md/medium"
-                      color="text-muted"
-                      style={{ textAlign: "center" }}
-                    >
-                      The theme has been added to your themes list.
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        gap: 8,
-                        width: "100%",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Button
-                        size="md"
-                        text="Cancel"
-                        variant="secondary"
-                        style={{ flex: 1 }}
-                        onPress={() => hideActionSheet()}
-                      />
-                    </View>
-                  </View>
                 </ActionSheet>
               ));
             } catch (e) {
-              throw e; // Let the original error handler deal with this
+              throw e;
             }
           },
         }}
@@ -613,6 +502,52 @@ export default function Themes() {
           ),
         }}
         CardComponent={ThemeCard}
+        OptionsActionSheetComponent={() => {
+          useObservable([colorsPref]);
+
+          const themeTypeOptions = [
+            { label: "Auto", value: undefined, icon: "RobotIcon" },
+            { label: "Dark", value: "dark" as const, icon: "ThemeDarkIcon" },
+            { label: "Light", value: "light" as const, icon: "ThemeLightIcon" },
+          ];
+
+          const handleTypeChange = (newType: "dark" | "light" | undefined) => {
+            colorsPref.type = newType;
+            getCurrentTheme()?.data &&
+              updateBunnyColor(getCurrentTheme()!.data!, { update: true });
+          };
+
+          return (
+            <ActionSheet>
+              <BottomSheetTitleHeader title="Options" />
+              <View style={{ paddingVertical: 20, gap: 12 }}>
+                <TableRowGroup title="Override Theme Type">
+                  {themeTypeOptions.map((option) => (
+                    <TableCheckboxRow
+                      key={option.label}
+                      icon={<TableRowIcon source={findAssetId(option.icon)} />}
+                      label={option.label}
+                      checked={(colorsPref.type ?? undefined) === option.value}
+                      onPress={() => handleTypeChange(option.value)}
+                    />
+                  ))}
+                </TableRowGroup>
+
+                <TableRowGroup title="Settings">
+                  <TableSwitchRow
+                    label="Show Chat Background"
+                    subLabel="Shows or hides the theme's background image in chat"
+                    icon={<TableRow.Icon source={findAssetId("ImageIcon")} />}
+                    value={colorsPref.customBackground !== "hidden"}
+                    onValueChange={(value) => {
+                      colorsPref.customBackground = value ? null : "hidden";
+                    }}
+                  />
+                </TableRowGroup>
+              </View>
+            </ActionSheet>
+          );
+        }}
       />
     );
   }
