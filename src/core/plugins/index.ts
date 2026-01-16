@@ -7,11 +7,13 @@ interface CorePlugin {
 }
 
 // Register core plugins in the registry for deferred loading
-[
-  "quickinstall", "badges", "notrack", "messagefix", "fixembed", "fireenhancements", "cloudsync"
-].forEach(id => {
-  lazyRegistry.register(`core.plugin.${id}`, () => require(`./${id}`).default);
-});
+lazyRegistry.register("core.plugin.quickinstall", () => require("./quickinstall").default);
+lazyRegistry.register("core.plugin.badges", () => require("./badges").default);
+lazyRegistry.register("core.plugin.notrack", () => require("./notrack").default);
+lazyRegistry.register("core.plugin.messagefix", () => require("./messagefix").default);
+lazyRegistry.register("core.plugin.fixembed", () => require("./fixembed").default);
+lazyRegistry.register("core.plugin.fireenhancements", () => require("./fireenhancements").default);
+lazyRegistry.register("core.plugin.cloudsync", () => require("./cloudsync").default);
 
 // Called from @lib/plugins
 export const getCorePlugins = (): Record<string, CorePlugin> => ({

@@ -5,6 +5,12 @@ import { logger } from "@lib/utils/logger";
 import { settings } from "@lib/api/settings";
 import { React } from "@metro/common";
 
+const { TableRowGroup, TableRow, TableSwitchRow, Stack } = findByProps(
+  "TableRowGroup",
+  "TableRow",
+  "TableSwitchRow",
+  "Stack",
+);
 const { ScrollView, Text } = require("react-native");
 
 type FixEmbedSettings = {
@@ -95,14 +101,14 @@ export default defineCorePlugin({
 
     // Prefer table-style rows (TableRowGroup / TableSwitchRow) and Stack layout similar to other core plugins.
     const {
-      TableRowGroup,
-      TableRow,
-      TableSwitchRow,
-      Stack,
-    } = findByProps("TableRowGroup", "TableRow", "TableSwitchRow", "Stack") || {};
+      TableRowGroup: _TRG,
+      TableRow: _TR,
+      TableSwitchRow: _TSR,
+      Stack: _S,
+    } = findByProps("TableRowGroup", "TableRow", "TableSwitchRow", "Stack");
 
     // Fallback if the table-style components are not available in the host environment
-    if (!TableRowGroup || !TableSwitchRow || !TableRow || !Stack) {
+    if (!_TRG || !_TSR || !_TR || !_S) {
       return React.createElement(
         ScrollView,
         { style: { flex: 1, padding: 12 } },
@@ -113,6 +119,12 @@ export default defineCorePlugin({
         ),
       );
     }
+
+    // Use the resolved components
+    const TableRowGroup = _TRG;
+    const TableRow = _TR;
+    const TableSwitchRow = _TSR;
+    const Stack = _S;
 
     return React.createElement(ScrollView, { style: { flex: 1 } }, [
       React.createElement(
