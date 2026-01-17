@@ -6,22 +6,15 @@ interface CorePlugin {
   preenabled: boolean;
 }
 
-// Register core plugins in the registry for deferred loading
-[
-  "quickinstall", "badges", "notrack", "messagefix", "fixembed", "fireenhancements", "cloudsync"
-].forEach(id => {
-  lazyRegistry.register(`core.plugin.${id}`, () => require(`./${id}`).default);
-});
-
 // Called from @lib/plugins
 export const getCorePlugins = (): Record<string, CorePlugin> => ({
-  "bunny.quickinstall": { default: lazyRegistry.get("core.plugin.quickinstall"), preenabled: true },
-  "bunny.badges": { default: lazyRegistry.get("core.plugin.badges"), preenabled: true },
-  "bunny.notrack": { default: lazyRegistry.get("core.plugin.notrack"), preenabled: true },
-  "bunny.messagefix": { default: lazyRegistry.get("core.plugin.messagefix"), preenabled: true },
-  "bunny.fixembed": { default: lazyRegistry.get("core.plugin.fixembed"), preenabled: true },
-  "bunny.enhancements": { default: lazyRegistry.get("core.plugin.fireenhancements"), preenabled: true },
-  "firecord.cloudsync": { default: lazyRegistry.get("core.plugin.cloudsync"), preenabled: true }
+  "bunny.quickinstall": { default: require("./quickinstall").default, preenabled: true },
+  "bunny.badges": { default: require("./badges").default, preenabled: true },
+  "bunny.notrack": { default: require("./notrack").default, preenabled: true },
+  "bunny.messagefix": { default: require("./messagefix").default, preenabled: true },
+  "bunny.fixembed": { default: require("./fixembed").default, preenabled: true },
+  "firecord.enhancements": { default: require("./fireenhancements").default, preenabled: true },
+  "firecord.cloudsync": { default: require("./cloudsync").default, preenabled: true }
 });
 
 /**

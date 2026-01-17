@@ -778,6 +778,10 @@ export async function initPlugins(
 
   // Ensure core plugins are registered prior to any plugin startup logic so
   // settings pages and UI that read registered/core plugins show them.
+  await awaitStorage(pluginRepositories, pluginSettings);
+
+  // Ensure core plugins are registered prior to any plugin startup logic so
+  // settings pages and UI that read registered/core plugins show them.
   // registerCorePlugins is synchronous and idempotent, but call it here as a
   // safety-net in case module-load registration didn't run earlier.
   try {
@@ -785,8 +789,6 @@ export async function initPlugins(
   } catch {
     // ignore
   }
-
-  await awaitStorage(pluginRepositories, pluginSettings);
 
   // Collect enabled plugin ids
   const enabledIds = [...registeredPlugins.keys()].filter((id) =>
