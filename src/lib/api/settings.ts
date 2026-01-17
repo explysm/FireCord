@@ -15,6 +15,7 @@ export interface Settings {
     enableEvalCommand?: boolean;
     compactMode?: boolean;
     firstLaunch?: boolean;
+    alwaysShowOnboarding?: boolean;
 }
 
 export interface LoaderConfig {

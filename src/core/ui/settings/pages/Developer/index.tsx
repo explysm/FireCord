@@ -345,6 +345,15 @@ export default function Developer() {
                 settings.enableEvalCommand = v;
               }}
             />
+            <TableSwitchRow
+              label="Always Show Onboarding"
+              subLabel="Show the onboarding sheet every time the app launches"
+              icon={<TableRow.Icon source={findAssetId("CircleInformationIcon-primary")} />}
+              value={!!settings.alwaysShowOnboarding}
+              onValueChange={(v: boolean) => {
+                settings.alwaysShowOnboarding = v;
+              }}
+            />
           </TableRowGroup>
 
           <TableRowGroup title="Dangerous Actions">

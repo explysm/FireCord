@@ -74,8 +74,8 @@ export default async () => {
     const { settings } = await import("@lib/api/settings");
     const { showSheet } = await import("@lib/ui/sheets");
 
-    // Show onboarding if it's the first launch
-    if (settings.firstLaunch !== false) {
+    // Show onboarding if it's the first launch or if explicitly requested via developer settings
+    if (settings.alwaysShowOnboarding || settings.firstLaunch !== false) {
         showSheet("firecord-onboarding", import("@core/ui/Onboarding"));
     }
 
