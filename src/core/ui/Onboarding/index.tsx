@@ -1,5 +1,5 @@
-import { React, NavigationNative, clipboard } from "@metro/common";
-import { View, Image, Linking, Dimensions } from "react-native";
+import { React, NavigationNative } from "@metro/common";
+import { View, Image, Linking } from "react-native";
 import {
   Stack,
   Button,
@@ -14,14 +14,9 @@ import { Strings } from "@core/i18n";
 import { settings } from "@lib/api/settings";
 import { hideSheet } from "@lib/ui/sheets";
 import { firecordIcon } from "@core/ui/settings";
-import { findByPropsLazy } from "@metro/wrappers";
-
-const { width } = Dimensions.get("window");
-const tabsNavigationRef = findByPropsLazy("getRootNavigationRef");
 
 export default function OnboardingSheet() {
   const [step, setStep] = React.useState(0);
-  const navigation = NavigationNative.useNavigation();
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
@@ -31,29 +26,9 @@ export default function OnboardingSheet() {
     hideSheet("firecord-onboarding");
   };
 
-  const navigateToCustomPage = (title: string, component: any) => {
-    try {
-        navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-          title,
-          render: component,
-        });
-    } catch (e) {
-        // Fallback to root navigation if useNavigation fails
-        const rootNav = tabsNavigationRef.getRootNavigationRef();
-        if (rootNav) {
-            rootNav.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                title,
-                render: component,
-            });
-        }
-    }
-    finish();
-  };
-
   const steps = [
     {
       title: Strings.ONBOARDING_WELCOME_TITLE,
-      description: Strings.ONBOARDING_WELCOME_DESC,
       icon: { uri: firecordIcon },
       color: "rgba(114, 137, 218, 0.1)",
       content: (
@@ -70,20 +45,13 @@ export default function OnboardingSheet() {
     },
     {
       title: Strings.ONBOARDING_PLUGINS_TITLE,
-      description: Strings.ONBOARDING_PLUGINS_DESC,
       icon: findAssetId("ActivitiesIcon"),
       color: "rgba(67, 181, 129, 0.1)",
       content: (
         <Stack spacing={12}>
-           <TableRow
-             label="Browse Plugins"
-             subLabel="Discover and install from the app"
-             icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
-             onPress={() => {
-                 const Plugins = require("@core/ui/settings/pages/Plugins").default;
-                 navigateToCustomPage(Strings.PLUGINS, Plugins);
-             }}
-           />
+           <Text variant="text-md/medium" style={{ textAlign: "center" }}>
+              {Strings.ONBOARDING_PLUGINS_DESC}
+           </Text>
            <TableRow
              label="plugins-list.pages.dev"
              subLabel="View the official web repository"
@@ -95,19 +63,13 @@ export default function OnboardingSheet() {
     },
     {
       title: Strings.ONBOARDING_THEMES_TITLE,
-      description: Strings.ONBOARDING_THEMES_DESC,
       icon: findAssetId("PaintPaletteIcon"),
       color: "rgba(235, 69, 158, 0.1)",
       content: (
         <Stack spacing={12}>
-           <TableRow
-             label="Browse Themes"
-             icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
-             onPress={() => {
-                 const Themes = require("@core/ui/settings/pages/Themes").default;
-                 navigateToCustomPage(Strings.THEMES, Themes);
-             }}
-           />
+           <Text variant="text-md/medium" style={{ textAlign: "center" }}>
+              {Strings.ONBOARDING_THEMES_DESC}
+           </Text>
            <TableRow
              label="Revenge Discord"
              subLabel="Join the community for more themes"
@@ -119,11 +81,13 @@ export default function OnboardingSheet() {
     },
     {
       title: Strings.ONBOARDING_FONTS_TITLE,
-      description: Strings.ONBOARDING_FONTS_DESC,
       icon: findAssetId("LettersIcon"),
       color: "rgba(88, 101, 242, 0.1)",
       content: (
         <Stack spacing={12}>
+           <Text variant="text-md/medium" style={{ textAlign: "center" }}>
+              {Strings.ONBOARDING_FONTS_DESC}
+           </Text>
            <TableRow
              label="Bunny Google Fonts"
              icon={<TableRowIcon source={findAssetId("LinkIcon")} />}
@@ -140,23 +104,36 @@ export default function OnboardingSheet() {
     },
     {
       title: Strings.ONBOARDING_CLOUDSYNC_TITLE,
-      description: Strings.ONBOARDING_CLOUDSYNC_DESC,
       icon: findAssetId("LaptopPhoneIcon"),
       color: "rgba(255, 170, 0, 0.1)",
       content: (
         <Stack spacing={12}>
-           <Text variant="text-sm/medium" style={{ textAlign: "center", marginBottom: 8 }}>
-              Quickly restore your setup by logging into Cloud Sync.
+           <Text variant="text-md/medium" style={{ textAlign: "center" }}>
+              {Strings.ONBOARDING_CLOUDSYNC_DESC}
            </Text>
-           <Button
-             text="Configure Cloud Sync"
-             variant="primary"
-             onPress={() => {
-                 const CloudSync = require("@core/ui/settings/pages/CloudSync").default;
-                 navigateToCustomPage("Cloud Sync", CloudSync);
-             }}
-           />
+           <View style={{ alignItems: "center", marginTop: 8 }}>
+              <TableRowIcon 
+                source={findAssetId("LaptopPhoneIcon")} 
+                style={{ width: 48, height: 48, tintColor: "#FFAA00" }} 
+              />
+           </View>
         </Stack>
+      )
+    },
+    {
+      title: Strings.ONBOARDING_FINISH_TITLE,
+      icon: findAssetId("CheckmarkCircle"),
+      color: "rgba(67, 181, 129, 0.1)",
+      content: (
+        <View style={{ alignItems: "center", gap: 16 }}>
+             <Image 
+                source={findAssetId("CheckmarkCircle")} 
+                style={{ width: 80, height: 80, tintColor: "#43B581" }} 
+             />
+             <Text variant="heading-md/semibold" style={{ textAlign: "center", paddingHorizontal: 20 }}>
+                {Strings.ONBOARDING_FINISH_DESC}
+             </Text>
+        </View>
       )
     }
   ];

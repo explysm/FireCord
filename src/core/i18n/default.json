@@ -133,6 +133,8 @@
   "ONBOARDING_FONTS_DESC": "Use unique fonts from bunny-google-fonts or other specialized font repositories.",
   "ONBOARDING_CLOUDSYNC_TITLE": "Sync Your Setup",
   "ONBOARDING_CLOUDSYNC_DESC": "Already have a configuration? Authenticate with Cloud Sync to import your settings.",
+  "ONBOARDING_FINISH_TITLE": "All Set!",
+  "ONBOARDING_FINISH_DESC": "You can find all of these in settings. Enjoy your fiery experience!",
   "ONBOARDING_GET_STARTED": "Get Started",
   "ONBOARDING_NEXT": "Next",
   "ONBOARDING_FINISH": "Finish"
