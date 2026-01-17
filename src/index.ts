@@ -69,13 +69,14 @@ export default async () => {
 
   // Deferred work: run after interactions to avoid blocking initial paint and navigation.
   const runDeferred = async () => {
+    const { VdPluginManager } = await import("@core/vendetta/plugins");
     const { initPlugins, updatePlugins } = await import("@lib/addons/plugins");
     const { settings } = await import("@lib/api/settings");
     const { showSheet } = await import("@lib/ui/sheets");
 
     // Show onboarding if it's the first launch
     if (settings.firstLaunch !== false) {
-        showSheet("firecord-onboarding", () => import("@core/ui/Onboarding"));
+        showSheet("firecord-onboarding", import("@core/ui/Onboarding"));
     }
 
     // Initialize Vendetta plugins (may start many plugins) — do not block UI.

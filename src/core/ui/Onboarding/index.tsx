@@ -64,7 +64,7 @@ export default function OnboardingSheet() {
                     title: Strings.PLUGINS,
                     render: () => {
                         const Plugins = require("@core/ui/settings/pages/Plugins").default;
-                        return <Plugins />;
+                        return React.createElement(Plugins);
                     }
                  });
              }}
@@ -94,7 +94,7 @@ export default function OnboardingSheet() {
                     title: Strings.THEMES,
                     render: () => {
                         const Themes = require("@core/ui/settings/pages/Themes").default;
-                        return <Themes />;
+                        return React.createElement(Themes);
                     }
                  });
              }}
@@ -148,7 +148,7 @@ export default function OnboardingSheet() {
                     title: "Cloud Sync",
                     render: () => {
                         const CloudSync = require("@core/ui/settings/pages/CloudSync").default;
-                        return <CloudSync />;
+                        return React.createElement(CloudSync);
                     }
                  });
              }}
