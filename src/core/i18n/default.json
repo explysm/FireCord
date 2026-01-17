@@ -122,5 +122,18 @@
   "UNINSTALL_TITLE": "Uninstall {title}",
   "URL_PLACEHOLDER": "https://github.com/explysm/FireCord",
   "VERSION": "Version",
-  "VERSIONS": "Versions"
+  "VERSIONS": "Versions",
+  "ONBOARDING_WELCOME_TITLE": "Welcome to FireCord!",
+  "ONBOARDING_WELCOME_DESC": "Ignite your Discord experience with powerful customization. Let's get you set up!",
+  "ONBOARDING_PLUGINS_TITLE": "Enhance with Plugins",
+  "ONBOARDING_PLUGINS_DESC": "Add new features and functionality. Find them in Plugins > Browse or at plugins-list.pages.dev",
+  "ONBOARDING_THEMES_TITLE": "Personalize with Themes",
+  "ONBOARDING_THEMES_DESC": "Change the look and feel. Explore Themes > Browse or join the Revenge Discord.",
+  "ONBOARDING_FONTS_TITLE": "Stylize with Fonts",
+  "ONBOARDING_FONTS_DESC": "Use unique fonts from bunny-google-fonts or other specialized font repositories.",
+  "ONBOARDING_CLOUDSYNC_TITLE": "Sync Your Setup",
+  "ONBOARDING_CLOUDSYNC_DESC": "Already have a configuration? Authenticate with Cloud Sync to import your settings.",
+  "ONBOARDING_GET_STARTED": "Get Started",
+  "ONBOARDING_NEXT": "Next",
+  "ONBOARDING_FINISH": "Finish"
 }

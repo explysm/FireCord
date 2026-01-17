@@ -14,6 +14,7 @@ export interface Settings {
     };
     enableEvalCommand?: boolean;
     compactMode?: boolean;
+    firstLaunch?: boolean;
 }
 
 export interface LoaderConfig {
@@ -24,7 +25,11 @@ export interface LoaderConfig {
     loadReactDevTools: boolean;
 }
 
-export const settings = wrapSync(createStorage<Settings>(createMMKVBackend("VENDETTA_SETTINGS")));
+export const settings = wrapSync(createStorage<Settings>(createMMKVBackend("VENDETTA_SETTINGS"), {
+    dflt: {
+        firstLaunch: true,
+    } as Settings
+}));
 
 export const loaderConfig = wrapSync(createStorage<LoaderConfig>(
     createFileBackend(getLoaderConfigPath(), {
