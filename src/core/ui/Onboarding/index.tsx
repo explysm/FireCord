@@ -14,12 +14,13 @@ import { Strings } from "@core/i18n";
 import { settings } from "@lib/api/settings";
 import { hideSheet } from "@lib/ui/sheets";
 import { firecordIcon } from "@core/ui/settings";
+import { findByPropsLazy } from "@metro/wrappers";
 
 const { width } = Dimensions.get("window");
+const tabsNavigationRef = findByPropsLazy("getRootNavigationRef");
 
 export default function OnboardingSheet() {
   const [step, setStep] = React.useState(0);
-  const navigation = NavigationNative.useNavigation();
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
@@ -27,6 +28,19 @@ export default function OnboardingSheet() {
   const finish = () => {
     settings.firstLaunch = false;
     hideSheet("firecord-onboarding");
+  };
+
+  const navigateToCustomPage = (title: string, component: any) => {
+    const navigation = tabsNavigationRef.getRootNavigationRef();
+    finish();
+    if (navigation) {
+      setTimeout(() => {
+        navigation.push("SHIGGYCORD_CUSTOM_PAGE", {
+          title,
+          render: component,
+        });
+      }, 100);
+    }
   };
 
   const steps = [
@@ -60,13 +74,7 @@ export default function OnboardingSheet() {
              icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
              onPress={() => {
                  const Plugins = require("@core/ui/settings/pages/Plugins").default;
-                 finish();
-                 setTimeout(() => {
-                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                        title: Strings.PLUGINS,
-                        render: Plugins,
-                    });
-                 }, 100);
+                 navigateToCustomPage(Strings.PLUGINS, Plugins);
              }}
            />
            <TableRow
@@ -90,13 +98,7 @@ export default function OnboardingSheet() {
              icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
              onPress={() => {
                  const Themes = require("@core/ui/settings/pages/Themes").default;
-                 finish();
-                 setTimeout(() => {
-                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                        title: Strings.THEMES,
-                        render: Themes,
-                    });
-                 }, 100);
+                 navigateToCustomPage(Strings.THEMES, Themes);
              }}
            />
            <TableRow
@@ -144,13 +146,7 @@ export default function OnboardingSheet() {
              variant="primary"
              onPress={() => {
                  const CloudSync = require("@core/ui/settings/pages/CloudSync").default;
-                 finish();
-                 setTimeout(() => {
-                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                        title: "Cloud Sync",
-                        render: CloudSync,
-                    });
-                 }, 100);
+                 navigateToCustomPage("Cloud Sync", CloudSync);
              }}
            />
         </Stack>
