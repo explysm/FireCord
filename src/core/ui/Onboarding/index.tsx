@@ -59,14 +59,14 @@ export default function OnboardingSheet() {
              subLabel="Discover and install from the app"
              icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
              onPress={() => {
+                 const Plugins = require("@core/ui/settings/pages/Plugins").default;
                  finish();
-                 navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                    title: Strings.PLUGINS,
-                    render: () => {
-                        const Plugins = require("@core/ui/settings/pages/Plugins").default;
-                        return React.createElement(Plugins);
-                    }
-                 });
+                 setTimeout(() => {
+                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
+                        title: Strings.PLUGINS,
+                        render: Plugins,
+                    });
+                 }, 100);
              }}
            />
            <TableRow
@@ -89,14 +89,14 @@ export default function OnboardingSheet() {
              label="Browse Themes"
              icon={<TableRowIcon source={findAssetId("SearchIcon")} />}
              onPress={() => {
+                 const Themes = require("@core/ui/settings/pages/Themes").default;
                  finish();
-                 navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                    title: Strings.THEMES,
-                    render: () => {
-                        const Themes = require("@core/ui/settings/pages/Themes").default;
-                        return React.createElement(Themes);
-                    }
-                 });
+                 setTimeout(() => {
+                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
+                        title: Strings.THEMES,
+                        render: Themes,
+                    });
+                 }, 100);
              }}
            />
            <TableRow
@@ -143,14 +143,14 @@ export default function OnboardingSheet() {
              text="Configure Cloud Sync"
              variant="primary"
              onPress={() => {
+                 const CloudSync = require("@core/ui/settings/pages/CloudSync").default;
                  finish();
-                 navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
-                    title: "Cloud Sync",
-                    render: () => {
-                        const CloudSync = require("@core/ui/settings/pages/CloudSync").default;
-                        return React.createElement(CloudSync);
-                    }
-                 });
+                 setTimeout(() => {
+                    navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
+                        title: "Cloud Sync",
+                        render: CloudSync,
+                    });
+                 }, 100);
              }}
            />
         </Stack>
