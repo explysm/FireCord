@@ -21,6 +21,7 @@ const tabsNavigationRef = findByPropsLazy("getRootNavigationRef");
 
 export default function OnboardingSheet() {
   const [step, setStep] = React.useState(0);
+  const navigation = NavigationNative.useNavigation();
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
@@ -31,16 +32,22 @@ export default function OnboardingSheet() {
   };
 
   const navigateToCustomPage = (title: string, component: any) => {
-    const navigation = tabsNavigationRef.getRootNavigationRef();
-    finish();
-    if (navigation) {
-      setTimeout(() => {
-        navigation.push("SHIGGYCORD_CUSTOM_PAGE", {
+    try {
+        navigation.navigate("SHIGGYCORD_CUSTOM_PAGE", {
           title,
           render: component,
         });
-      }, 100);
+    } catch (e) {
+        // Fallback to root navigation if useNavigation fails
+        const rootNav = tabsNavigationRef.getRootNavigationRef();
+        if (rootNav) {
+            rootNav.navigate("SHIGGYCORD_CUSTOM_PAGE", {
+                title,
+                render: component,
+            });
+        }
     }
+    finish();
   };
 
   const steps = [
