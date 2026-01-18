@@ -9,7 +9,7 @@ import { getDebugInfo } from "@lib/api/debug";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { openAlert } from "@lib/ui/alerts";
-import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
+import { GITHUB } from "@lib/utils/constants";
 import { lazyRegistry } from "@lib/utils/lazyRegistry";
 import { NavigationNative } from "@metro/common";
 import {
@@ -277,13 +277,6 @@ export default function General() {
               gap: 12,
             }}
           >
-            <CommunityCardButton
-              icon={findAssetId("Discord")}
-              label="Discord"
-              subLabel="Join our support server"
-              color="#5865F2"
-              onPress={() => Linking.openURL(DISCORD_SERVER)}
-            />
             <CommunityCardButton
               icon={findAssetId("img_account_sync_github_white")}
               label="GitHub"

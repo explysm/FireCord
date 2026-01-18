@@ -1,8 +1,12 @@
 # FireCord
 
-Bundle based on Kettu/ShiggyCord, made just for fun
+Bundle based on Kettu/ShiggyCord, made just for fun & personal use
 
-### Have any questions? You can reach us at [discord.gg/nFUSEgtkQj](https://discord.gg/nFUSEgtkQj)
+# BIG RED NOTE
+
+All firecord updates are generated using Gemini (3flash/3pro).
+
+if you are against Ai/Vibecoding, then use [ShiggyCord](https://github.com/kmmiio99o/shiggymanager) it is as good, if not better than FireCord
 
 
 ## Installing
