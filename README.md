@@ -2,6 +2,9 @@
 
 Bundle based on Kettu/ShiggyCord, made just for fun
 
+### Have any questions? You can reach us at [discord.gg/nFUSEgtkQj](https://discord.gg/nFUSEgtkQj)
+
+
 ## Installing
 
 ### Android
