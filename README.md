@@ -16,7 +16,7 @@ if you are against Ai/Vibecoding, then use [ShiggyCord](https://github.com/kmmii
 #### No root
 > Download and install Fire Manager from [explysm/FireManager](https://github.com/explysm/firemanager)
 > Click "Install" and watch the flames arise. 
-> (We highly suggest using version ```305012``` or ```306013``` by going to Fire Manager > settings > other > custom version, as these two versions are the most compatible with themes/plugins while still being some-what new.)
+> (We highly suggest using version ```305012``` or ```306013``` by going to Fire Manager > Add New / Install > Switch version to "Custom". as these two versions are the most compatible with themes/plugins while still being some-what new.)
 
 #### Root
 > Note:
