@@ -1,7 +1,9 @@
 import { Strings } from "@core/i18n";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
+import { showConfirmationAlert } from "@core/vendetta/alerts";
 import { VdThemeInfo, themes, selectTheme } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
+import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { showSheet } from "@lib/ui/sheets";
 import { NavigationNative, React } from "@metro/common";
@@ -28,6 +30,14 @@ export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
       onToggleChange={(v: boolean) => {
         try {
           selectTheme(v ? theme : null);
+          showConfirmationAlert({
+            title: Strings.HOLD_UP,
+            content: Strings.THEMES_RELOAD_FOR_CHANGES,
+            confirmText: Strings.RELOAD,
+            cancelText: Strings.CANCEL,
+            confirmColor: "red",
+            onConfirm: BundleUpdaterManager.reload,
+          });
         } catch (e: any) {
           console.error("Error while selecting theme:", e);
         }

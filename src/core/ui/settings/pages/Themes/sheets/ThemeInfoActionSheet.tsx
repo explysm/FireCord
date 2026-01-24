@@ -2,6 +2,7 @@ import { findAssetId } from "@lib/api/assets";
 import { purgeStorage } from "@lib/api/storage";
 import { hideSheet } from "@lib/ui/sheets";
 import { ActionSheet, Card, IconButton, Text } from "@metro/common/components";
+import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { clipboard } from "@metro/common";
 import React, { ComponentProps, useEffect, useState } from "react";
 import { ScrollView, View, TouchableOpacity } from "react-native";
@@ -96,6 +97,16 @@ export default function ThemeInfoActionSheet({
     try {
       await fetchTheme(themeState.id, themeState.selected);
       showToast("Theme refreshed successfully");
+      if (themeState.selected) {
+        showConfirmationAlert({
+          title: Strings.HOLD_UP,
+          content: Strings.THEMES_RELOAD_FOR_CHANGES,
+          confirmText: Strings.RELOAD,
+          cancelText: Strings.CANCEL,
+          confirmColor: "red",
+          onConfirm: BundleUpdaterManager.reload,
+        });
+      }
     } catch (e) {
       console.error("Failed to refresh theme:", e);
       showToast("Failed to refresh theme");
@@ -117,7 +128,16 @@ export default function ThemeInfoActionSheet({
         hideSheet("ThemeInfoActionSheet");
         try {
           const wasSelected = await removeTheme(themeState.id);
-          if (wasSelected) selectTheme(null);
+          if (wasSelected) {
+            showConfirmationAlert({
+              title: Strings.HOLD_UP,
+              content: Strings.THEMES_RELOAD_FOR_CHANGES,
+              confirmText: Strings.RELOAD,
+              cancelText: Strings.CANCEL,
+              confirmColor: "red",
+              onConfirm: BundleUpdaterManager.reload,
+            });
+          }
           showToast("Theme removed successfully");
         } catch (e) {
           console.error("Failed to remove theme:", e);
@@ -131,7 +151,14 @@ export default function ThemeInfoActionSheet({
     try {
       selectTheme(themeState);
       hideSheet("ThemeInfoActionSheet");
-      showToast(`Applied theme: ${themeState.data.name}`);
+      showConfirmationAlert({
+        title: Strings.HOLD_UP,
+        content: Strings.THEMES_RELOAD_FOR_CHANGES,
+        confirmText: Strings.RELOAD,
+        cancelText: Strings.CANCEL,
+        confirmColor: "red",
+        onConfirm: BundleUpdaterManager.reload,
+      });
     } catch (e) {
       console.error("Failed to apply theme:", e);
       showToast("Failed to apply theme");
