@@ -89,7 +89,9 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
             i.settings?.includes("ACCOUNT"),
           );
 
-          let index = accountSectionIndex !== -1 ? accountSectionIndex + 1 : sections.length;
+          if (accountSectionIndex === -1) return ret;
+
+          let index = accountSectionIndex + 1;
 
           Object.keys(registeredSections).forEach((sect) => {
             const alreadyExists = sections.some((s: any) => s.label === sect);
@@ -113,8 +115,12 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
           (i) => i.props?.sections,
         ).props;
         // Credit to @palmdevs - https://discord.com/channels/1196075698301968455/1243605828783571024/1307940348378742816
-        let index =
-          -~sections.findIndex((i: any) => i.settings.includes("ACCOUNT")) || 1;
+        const accountSectionIndex = sections.findIndex((i: any) =>
+          i.settings.includes("ACCOUNT"),
+        );
+        if (accountSectionIndex === -1) return;
+
+        let index = accountSectionIndex + 1;
 
         Object.keys(registeredSections).forEach((sect) => {
           const alreadyExists = sections.some((s: any) => s.label === sect);
