@@ -16,10 +16,14 @@ import { showConfirmationAlert, showInputAlert } from "@core/vendetta/alerts";
 import { themes } from "@lib/addons/themes";
 import { fonts } from "@lib/addons/fonts";
 import { logger } from "@lib/utils/logger";
-import { NativeCacheModule } from "@lib/api/native/modules";
+import { BundleUpdaterManager, NativeCacheModule } from "@lib/api/native/modules";
 import { UserData } from "./types";
 import { defaultHost, defaultClientId, redirectRoute } from "./constants";
 import { vstorage, grabEverything } from "./index";
+import { Strings } from "@core/i18n";
+
+const { pushModal, popModal } = findByProps("pushModal", "popModal") as any;
+const OAuth2AuthorizeModal = findByName("OAuth2AuthorizeModal");
 
 const { pushModal, popModal } = findByProps("pushModal", "popModal") as any;
 const OAuth2AuthorizeModal = findByName("OAuth2AuthorizeModal");
@@ -111,6 +115,7 @@ export default function CloudSyncSettings() {
                 title: "Import Data?",
                 content: `This will install ${Object.keys(data.plugins).length} plugins, ${Object.keys(data.themes).length} themes, and ${Object.keys(data.fonts.installed).length + (data.fonts.custom?.length ?? 0)} fonts.`,
                 onConfirm: async () => {
+                    let reloadRequired = false;
                     const { VdPluginManager } = require("@core/vendetta/plugins");
                     for (const [id, pluginData] of Object.entries(data.plugins)) {
                         if (!VdPluginManager.plugins[id]) {
@@ -126,6 +131,7 @@ export default function CloudSyncSettings() {
                         if (!themes[id]) {
                             try {
                                 await (require("@lib/addons/themes").fetchTheme(id, themeData.enabled));
+                                if (themeData.enabled) reloadRequired = true;
                             } catch (e) {
                                 logger.error(`Failed to import theme ${id}`, e);
                             }
@@ -138,6 +144,7 @@ export default function CloudSyncSettings() {
                             try {
                                 const { installFont } = require("@lib/addons/fonts");
                                 await installFont(source, fontData.enabled);
+                                if (fontData.enabled) reloadRequired = true;
                             } catch (e) {
                                 logger.error(`Failed to import font ${source}`, e);
                             }
@@ -150,7 +157,10 @@ export default function CloudSyncSettings() {
                                     const { saveFont, selectFont } = require("@lib/addons/fonts");
                                     const { enabled, ...cleanData } = fontData;
                                     await saveFont(cleanData, enabled);
-                                    if (enabled) await selectFont(fontData.name);
+                                    if (enabled) {
+                                        await selectFont(fontData.name);
+                                        reloadRequired = true;
+                                    }
                                 } catch (e) {
                                     logger.error(`Failed to import custom font ${fontData.name}`, e);
                                 }
@@ -158,6 +168,16 @@ export default function CloudSyncSettings() {
                         }
                     }
                     showToast("Import complete", findAssetId("Check"));
+                    if (reloadRequired) {
+                        showConfirmationAlert({
+                            title: Strings.HOLD_UP,
+                            content: Strings.RESTART_REQUIRED_TO_TAKE_EFFECT,
+                            confirmText: Strings.RELOAD,
+                            cancelText: Strings.CANCEL,
+                            confirmColor: "red",
+                            onConfirm: BundleUpdaterManager.reload,
+                        });
+                    }
                 }
             });
         } catch (e) {

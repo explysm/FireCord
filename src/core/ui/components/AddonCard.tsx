@@ -98,6 +98,7 @@ interface CardProps {
   actions?: Action[];
   overflowTitle?: string;
   overflowActions?: OverflowAction[];
+  children?: React.ReactNode;
 }
 
 export default function AddonCard(props: CardProps) {
@@ -178,6 +179,7 @@ export default function AddonCard(props: CardProps) {
         {!isCompact && props.descriptionLabel && (
           <Text variant="text-md/medium">{props.descriptionLabel}</Text>
         )}
+        {props.children}
       </Stack>
     </Card>
   );
